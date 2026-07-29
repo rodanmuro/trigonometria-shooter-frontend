@@ -119,11 +119,6 @@ export class GameScene extends Phaser.Scene {
       this.cardSpawner.removeCard(hitCard);
 
       this.recordShotToBackend(hitCard, pointer.x, pointer.y);
-
-      // Al acertar la razón pedida, se pasa a una nueva ronda
-      if (wasCorrect) {
-        this.generateNewQuestion();
-      }
     }
   }
 
@@ -205,6 +200,8 @@ export class GameScene extends Phaser.Scene {
       hold: 800,
       onComplete: () => {
         notification.destroy();
+        // Cambiar de razón trigonométrica recién al subir de nivel, no en cada acierto
+        this.generateNewQuestion();
       }
     });
   }
