@@ -1,0 +1,119 @@
+import Phaser from 'phaser';
+import type { RatioLabel } from '../types';
+import { CARD_CONFIG } from '../utils/constants';
+import { CardExplosion } from '../effects/CardExplosion';
+
+/**
+ * Tarjeta con una fórmula (CO/H, CA/H o CO/CA) que se mueve por la pantalla
+ */
+export class Card extends Phaser.GameObjects.Container {
+  private background: Phaser.GameObjects.Graphics;
+  private labelText: Phaser.GameObjects.Text;
+  private value: RatioLabel;
+  private isCorrectAnswer: boolean;
+  private velocityX: number;
+  private velocityY: number;
+
+  constructor(
+    scene: Phaser.Scene,
+    x: number,
+    y: number,
+    value: RatioLabel,
+    isCorrect: boolean,
+    velocityX: number,
+    velocityY: number
+  ) {
+    super(scene, x, y);
+
+    this.value = value;
+    this.isCorrectAnswer = isCorrect;
+    this.velocityX = velocityX;
+    this.velocityY = velocityY;
+
+    this.background = scene.add.graphics();
+    this.drawCardBackground();
+
+    this.labelText = scene.add.text(0, 0, value, {
+      fontSize: '30px',
+      color: '#ffffff',
+      fontStyle: 'bold',
+      align: 'center'
+    });
+    this.labelText.setOrigin(0.5);
+
+    this.add([this.background, this.labelText]);
+
+    scene.add.existing(this);
+
+    this.setDepth(50);
+
+    this.setSize(CARD_CONFIG.CARD_WIDTH, CARD_CONFIG.CARD_HEIGHT);
+    this.setInteractive(
+      new Phaser.Geom.Rectangle(
+        -CARD_CONFIG.CARD_WIDTH / 2,
+        -CARD_CONFIG.CARD_HEIGHT / 2,
+        CARD_CONFIG.CARD_WIDTH,
+        CARD_CONFIG.CARD_HEIGHT
+      ),
+      Phaser.Geom.Rectangle.Contains
+    );
+  }
+
+  private drawCardBackground(): void {
+    const halfWidth = CARD_CONFIG.CARD_WIDTH / 2;
+    const halfHeight = CARD_CONFIG.CARD_HEIGHT / 2;
+
+    this.background.fillStyle(0x2c3e50, 1);
+    this.background.fillRoundedRect(
+      -halfWidth,
+      -halfHeight,
+      CARD_CONFIG.CARD_WIDTH,
+      CARD_CONFIG.CARD_HEIGHT,
+      10
+    );
+
+    this.background.lineStyle(3, 0x3498db, 1);
+    this.background.strokeRoundedRect(
+      -halfWidth,
+      -halfHeight,
+      CARD_CONFIG.CARD_WIDTH,
+      CARD_CONFIG.CARD_HEIGHT,
+      10
+    );
+  }
+
+  public updateMovement(delta: number): void {
+    const deltaSeconds = delta / 1000;
+
+    this.x += this.velocityX * deltaSeconds;
+    this.y += this.velocityY * deltaSeconds;
+  }
+
+  public isOutOfBounds(worldWidth: number, worldHeight: number): boolean {
+    const margin = 100;
+    return (
+      this.x < -margin ||
+      this.x > worldWidth + margin ||
+      this.y < -margin ||
+      this.y > worldHeight + margin
+    );
+  }
+
+  public getValue(): RatioLabel {
+    return this.value;
+  }
+
+  public isCorrect(): boolean {
+    return this.isCorrectAnswer;
+  }
+
+  public showHitCorrectEffect(): void {
+    CardExplosion.create(this.scene, this.x, this.y, true);
+    this.destroy();
+  }
+
+  public showHitWrongEffect(): void {
+    CardExplosion.create(this.scene, this.x, this.y, false);
+    this.destroy();
+  }
+}
