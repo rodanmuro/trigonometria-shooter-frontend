@@ -4,6 +4,7 @@ import { LoginScene } from '../scenes/LoginScene';
 import { MenuScene } from '../scenes/MenuScene';
 import { RatioIdentificationScene } from '../scenes/RatioIdentificationScene';
 import { TriangleApplicationScene } from '../scenes/TriangleApplicationScene';
+import AdminScene from '../scenes/AdminScene';
 
 export const gameConfig: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -15,5 +16,5 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
     default: 'arcade',
     arcade: { gravity: { x: 0, y: 0 }, debug: false }
   },
-  scene: [PreloadScene, LoginScene, MenuScene, RatioIdentificationScene, TriangleApplicationScene]
+  scene: [PreloadScene, LoginScene, MenuScene, RatioIdentificationScene, TriangleApplicationScene, AdminScene]
 };

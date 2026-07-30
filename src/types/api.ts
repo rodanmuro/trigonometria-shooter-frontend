@@ -91,3 +91,128 @@ export interface FinishSessionPayload {
   final_score: number;
   duration_seconds: number;
 }
+
+/**
+ * Tipos del panel de administración
+ */
+
+export interface PaginationInfo {
+  current_page: number;
+  last_page: number;
+  per_page: number;
+  total: number;
+}
+
+export interface PaginationInfoExtended extends PaginationInfo {
+  from: number | null;
+  to: number | null;
+}
+
+export interface AdminUserListItem extends UserData {
+  game_sessions_count: number;
+  avg_score: number | null;
+  best_score: number | null;
+  last_played_at: string | null;
+}
+
+export interface AdminFiltersApplied {
+  group: string | null;
+  profile: string | null;
+  search: string | null;
+  date_from: string;
+  date_to: string | null;
+  min_score: number;
+}
+
+export interface AdminUsersResponse {
+  success: boolean;
+  data: AdminUserListItem[];
+  pagination: PaginationInfoExtended;
+  filters_applied: AdminFiltersApplied;
+}
+
+export interface AdminGroupsResponse {
+  success: boolean;
+  data: string[];
+}
+
+export interface UserSessionSummary {
+  total_sessions: number;
+  avg_score: number;
+  best_score: number;
+  total_playtime_minutes: number;
+  first_session: string | null;
+  last_session: string | null;
+}
+
+export interface SessionListItemWithRow {
+  row_number: number;
+  id: number;
+  user_id: number;
+  game_mode: GameMode;
+  group_snapshot: string | null;
+  started_at: string;
+  finished_at: string | null;
+  final_score: number;
+  duration_seconds: number;
+  canvas_width: number;
+  canvas_height: number;
+  total_shots: number;
+  correct_shots: number;
+  wrong_shots: number;
+  accuracy: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DateFiltersApplied {
+  date_from: string | null;
+  date_to: string | null;
+}
+
+export interface AdminUserSessionsResponse {
+  success: boolean;
+  user: {
+    id: number;
+    email: string;
+    name: string;
+    lastname: string | null;
+    profile: string;
+    group: string | null;
+  };
+  summary: UserSessionSummary;
+  data: SessionListItemWithRow[];
+  pagination: PaginationInfoExtended;
+  filters_applied: DateFiltersApplied;
+}
+
+export interface CsvUploadResponse {
+  success: boolean;
+  message: string;
+  stats: {
+    created: number;
+    updated: number;
+    errors: number;
+  };
+  error_details: string[];
+}
+
+export interface AdminUsersFilterParams {
+  page?: number;
+  group?: string;
+  profile?: string;
+  search?: string;
+  per_page?: number;
+  sort_by?: 'email' | 'name' | 'group' | 'sessions_count' | 'created_at' | 'avg_score';
+  order?: 'asc' | 'desc';
+  date_from?: string;
+  date_to?: string;
+  min_score?: number;
+}
+
+export interface AdminSessionsFilterParams {
+  page?: number;
+  date_from?: string;
+  date_to?: string;
+  per_page?: number;
+}

@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { AuthManager } from '../managers/AuthManager';
 
 /**
  * Menú de selección de juego, entre el login y las escenas de juego
@@ -51,15 +52,34 @@ export class MenuScene extends Phaser.Scene {
       'Un triángulo con datos → ¿qué razón resuelve X?',
       () => this.scene.start('TriangleApplicationScene')
     );
+
+    const user = AuthManager.getInstance().getUser();
+    if (user?.profile === 'admin') {
+      this.createGameButton(
+        this.cameras.main.centerY + 280,
+        'PANEL ADMIN',
+        'Ver estudiantes, sesiones y cargar/exportar CSV',
+        () => this.scene.start('AdminScene'),
+        0x662222,
+        0xcc4444
+      );
+    }
   }
 
-  private createGameButton(y: number, title: string, description: string, onClick: () => void): void {
+  private createGameButton(
+    y: number,
+    title: string,
+    description: string,
+    onClick: () => void,
+    fillColor: number = 0x2c3e50,
+    strokeColor: number = 0x3498db
+  ): void {
     const centerX = this.cameras.main.centerX;
 
     const button = this.add.container(centerX, y);
 
-    const background = this.add.rectangle(0, 0, 560, 100, 0x2c3e50);
-    background.setStrokeStyle(3, 0x3498db);
+    const background = this.add.rectangle(0, 0, 560, 100, fillColor);
+    background.setStrokeStyle(3, strokeColor);
 
     const titleText = this.add.text(0, -18, title, {
       fontSize: '28px',
@@ -78,12 +98,14 @@ export class MenuScene extends Phaser.Scene {
 
     background.setInteractive({ useHandCursor: true });
 
+    const hoverColor = Phaser.Display.Color.IntegerToColor(fillColor).brighten(15).color;
+
     background.on('pointerover', () => {
-      background.setFillStyle(0x34495e);
+      background.setFillStyle(hoverColor);
       button.setScale(1.03);
     });
     background.on('pointerout', () => {
-      background.setFillStyle(0x2c3e50);
+      background.setFillStyle(fillColor);
       button.setScale(1);
     });
     background.on('pointerdown', onClick);
