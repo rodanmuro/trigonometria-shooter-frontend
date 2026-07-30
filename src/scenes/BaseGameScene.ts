@@ -473,11 +473,25 @@ export abstract class BaseGameScene extends Phaser.Scene {
       noButton.setScale(1);
     });
 
+    // Evita que un doble clic dispare dos veces scene.restart() (crearía
+    // dos sesiones en el backend, dejando una huérfana sin disparos).
+    let choiceMade = false;
+
     yesButton.on('pointerdown', () => {
+      if (choiceMade) return;
+      choiceMade = true;
+      yesButton.disableInteractive();
+      noButton.disableInteractive();
+
       this.scene.restart();
     });
 
     noButton.on('pointerdown', () => {
+      if (choiceMade) return;
+      choiceMade = true;
+      yesButton.disableInteractive();
+      noButton.disableInteractive();
+
       confirmText.destroy();
       yesButton.destroy();
       noButton.destroy();
