@@ -14,8 +14,15 @@ const VERTEX_B: Point = { x: 110, y: 90 };
 
 const RIGHT_ANGLE_MARK_SIZE = 16;
 
-const HIGHLIGHT_COLOR = '#00ff00';
 const NORMAL_VERTEX_COLOR = '#ffffff';
+const ANGLE_VALUE_COLOR = '#00ff00';
+
+// Posición del texto del valor en grados, hacia el interior del triángulo
+// desde cada vértice (A o B, el que sea el ángulo de referencia).
+const ANGLE_VALUE_OFFSET: Record<'A' | 'B', Point> = {
+  A: { x: VERTEX_A.x + 24, y: VERTEX_A.y + 28 },
+  B: { x: VERTEX_B.x - 42, y: VERTEX_B.y - 20 },
+};
 
 /**
  * Dibuja el triángulo rectángulo fijo del Juego 2 y las etiquetas de sus
@@ -28,6 +35,7 @@ export class TriangleDisplay extends Phaser.GameObjects.Container {
   private vertexTextA: Phaser.GameObjects.Text;
   private vertexTextB: Phaser.GameObjects.Text;
   private vertexTextC: Phaser.GameObjects.Text;
+  private angleValueText: Phaser.GameObjects.Text;
   private currentQuestion: TriangleQuestion | null = null;
 
   constructor(scene: Phaser.Scene) {
@@ -47,6 +55,15 @@ export class TriangleDisplay extends Phaser.GameObjects.Container {
     this.vertexTextC = scene.add.text(VERTEX_C.x - 24, VERTEX_C.y + 6, 'C', this.vertexStyle());
     [this.vertexTextA, this.vertexTextB, this.vertexTextC].forEach((text) => text.setOrigin(0.5));
 
+    this.angleValueText = scene.add.text(0, 0, '', {
+      fontSize: '20px',
+      color: ANGLE_VALUE_COLOR,
+      fontStyle: 'bold',
+      stroke: '#000000',
+      strokeThickness: 4,
+    });
+    this.angleValueText.setOrigin(0.5);
+
     this.add([
       this.triangleGraphics,
       this.sideTexts.a,
@@ -55,6 +72,7 @@ export class TriangleDisplay extends Phaser.GameObjects.Container {
       this.vertexTextA,
       this.vertexTextB,
       this.vertexTextC,
+      this.angleValueText,
     ]);
 
     scene.add.existing(this);
@@ -102,7 +120,8 @@ export class TriangleDisplay extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Actualiza las etiquetas de lados y resalta el ángulo de referencia (A o B)
+   * Actualiza las etiquetas de lados y marca el ángulo de referencia (A o B)
+   * con su valor en grados (más claro para el estudiante que solo un color)
    */
   public setQuestion(question: TriangleQuestion): void {
     this.currentQuestion = question;
@@ -111,8 +130,12 @@ export class TriangleDisplay extends Phaser.GameObjects.Container {
       this.sideTexts[side].setText(question.sideLabels[side] ?? '');
     });
 
-    this.vertexTextA.setColor(question.referenceAngle === 'A' ? HIGHLIGHT_COLOR : NORMAL_VERTEX_COLOR);
-    this.vertexTextB.setColor(question.referenceAngle === 'B' ? HIGHLIGHT_COLOR : NORMAL_VERTEX_COLOR);
+    this.vertexTextA.setColor(NORMAL_VERTEX_COLOR);
+    this.vertexTextB.setColor(NORMAL_VERTEX_COLOR);
+
+    const offset = ANGLE_VALUE_OFFSET[question.referenceAngle];
+    this.angleValueText.setText(`${question.angleDegrees}°`);
+    this.angleValueText.setPosition(offset.x, offset.y);
 
     this.animateIn();
   }

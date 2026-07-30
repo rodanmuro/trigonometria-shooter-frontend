@@ -26,5 +26,7 @@ export interface TriangleQuestion {
   shownSides: [TriangleSide, TriangleSide];
   /** Valor decorativo o "X" en cada uno de los 2 lados mostrados */
   sideLabels: Partial<Record<TriangleSide, string>>;
+  /** Valor decorativo en grados del ángulo de referencia (no interviene en el cálculo de la razón correcta) */
+  angleDegrees: number;
   correctFunction: TrigFunction;
 }

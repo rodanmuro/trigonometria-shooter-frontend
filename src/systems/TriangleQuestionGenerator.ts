@@ -56,10 +56,16 @@ export class TriangleQuestionGenerator {
       [unknownSide]: 'X',
     };
 
+    // Valor decorativo del ángulo de referencia (no se usa para calcular
+    // correctFunction, solo para que el estudiante identifique claramente
+    // cuál es el ángulo dado, en vez de una letra resaltada por color).
+    const angleDegrees = randomInt(20, 70);
+
     this.currentQuestion = {
       referenceAngle,
       shownSides: [sideOne, sideTwo],
       sideLabels,
+      angleDegrees,
       correctFunction,
     };
 
