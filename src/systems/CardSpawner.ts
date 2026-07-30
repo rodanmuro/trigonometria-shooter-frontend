@@ -1,18 +1,21 @@
 import Phaser from 'phaser';
 import { Card } from '../entities/Card';
-import type { Question, RatioLabel } from '../types';
 import { CARD_CONFIG } from '../utils/constants';
-import { getWrongRatios, randomInt } from '../utils/mathHelpers';
+import { getOtherLabels, randomInt } from '../utils/mathHelpers';
 
 type SpawnEdge = 'top' | 'bottom' | 'left' | 'right';
 
 /**
- * Sistema encargado de generar y gestionar las tarjetas de fórmula
+ * Sistema encargado de generar y gestionar las tarjetas de respuesta.
+ * Genérico sobre el pool de etiquetas: sirve tanto para las fórmulas del
+ * Juego 1 (CO/H, CA/H, CO/CA) como para los nombres de función del Juego 2
+ * (seno, coseno, tangente).
  */
 export class CardSpawner {
   private scene: Phaser.Scene;
   private cards: Card[] = [];
-  private currentQuestion: Question | null = null;
+  private pool: string[] = [];
+  private correctLabel: string | null = null;
   private spawnTimer: Phaser.Time.TimerEvent | null = null;
   private worldWidth: number;
   private worldHeight: number;
@@ -33,9 +36,12 @@ export class CardSpawner {
 
   /**
    * Inicia el spawn de tarjetas para una nueva pregunta
+   * @param pool Las etiquetas posibles (siempre 3, una de ellas correcta)
+   * @param correctLabel Cuál de las etiquetas del pool es la correcta
    */
-  public startSpawning(question: Question): void {
-    this.currentQuestion = question;
+  public startSpawning(pool: string[], correctLabel: string): void {
+    this.pool = pool;
+    this.correctLabel = correctLabel;
 
     this.clearAllCards();
 
@@ -57,7 +63,7 @@ export class CardSpawner {
   }
 
   private spawnCard(): void {
-    if (!this.currentQuestion) return;
+    if (!this.correctLabel) return;
 
     if (this.cards.length >= CARD_CONFIG.MAX_CARDS_ON_SCREEN) {
       return;
@@ -65,15 +71,15 @@ export class CardSpawner {
 
     const shouldBeCorrect = Math.random() < CARD_CONFIG.CORRECT_CARD_PROBABILITY;
 
-    let value: RatioLabel;
+    let value: string;
     let isCorrect: boolean;
 
     if (shouldBeCorrect) {
-      value = this.currentQuestion.correctRatio;
+      value = this.correctLabel;
       isCorrect = true;
     } else {
-      const wrongRatios = getWrongRatios(this.currentQuestion.correctRatio);
-      value = wrongRatios[randomInt(0, wrongRatios.length - 1)];
+      const wrongLabels = getOtherLabels(this.pool, this.correctLabel);
+      value = wrongLabels[randomInt(0, wrongLabels.length - 1)];
       isCorrect = false;
     }
 

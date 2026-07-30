@@ -1,15 +1,15 @@
 import Phaser from 'phaser';
-import type { RatioLabel } from '../types';
 import { CARD_CONFIG } from '../utils/constants';
 import { CardExplosion } from '../effects/CardExplosion';
 
 /**
- * Tarjeta con una fórmula (CO/H, CA/H o CO/CA) que se mueve por la pantalla
+ * Tarjeta con una etiqueta (fórmula CO/H, CA/H, CO/CA, o nombre de función
+ * seno/coseno/tangente, según el juego) que se mueve por la pantalla
  */
 export class Card extends Phaser.GameObjects.Container {
   private background: Phaser.GameObjects.Graphics;
   private labelText: Phaser.GameObjects.Text;
-  private value: RatioLabel;
+  private value: string;
   private isCorrectAnswer: boolean;
   private velocityX: number;
   private velocityY: number;
@@ -18,7 +18,7 @@ export class Card extends Phaser.GameObjects.Container {
     scene: Phaser.Scene,
     x: number,
     y: number,
-    value: RatioLabel,
+    value: string,
     isCorrect: boolean,
     velocityX: number,
     velocityY: number
@@ -33,7 +33,7 @@ export class Card extends Phaser.GameObjects.Container {
     this.background = scene.add.graphics();
     this.drawCardBackground();
 
-    this.labelText = scene.add.text(0, 0, value, {
+    this.labelText = scene.add.text(0, 0, value.toUpperCase(), {
       fontSize: '30px',
       color: '#ffffff',
       fontStyle: 'bold',
@@ -99,7 +99,7 @@ export class Card extends Phaser.GameObjects.Container {
     );
   }
 
-  public getValue(): RatioLabel {
+  public getValue(): string {
     return this.value;
   }
 

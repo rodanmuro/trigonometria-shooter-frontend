@@ -7,17 +7,28 @@ import type {
   ApiResponse,
   GameSessionData,
   FinishSessionPayload,
-  FinishedSessionData
+  FinishedSessionData,
+  GameMode
 } from '../types/api';
 
 export const sessionApiService = {
   /**
    * Crear una nueva sesión de juego
    */
-  async createSession(startedAt: string, canvasWidth: number, canvasHeight: number): Promise<GameSessionData> {
+  async createSession(
+    startedAt: string,
+    canvasWidth: number,
+    canvasHeight: number,
+    gameMode: GameMode
+  ): Promise<GameSessionData> {
     const response = await apiClient.post<ApiResponse<GameSessionData>>(
       '/sessions',
-      { started_at: startedAt, canvas_width: Math.round(canvasWidth), canvas_height: Math.round(canvasHeight) }
+      {
+        started_at: startedAt,
+        canvas_width: Math.round(canvasWidth),
+        canvas_height: Math.round(canvasHeight),
+        game_mode: gameMode
+      }
     );
 
     return response.data.data;

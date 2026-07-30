@@ -22,9 +22,12 @@ export interface UserData {
   updated_at: string;
 }
 
+export type GameMode = 'ratio_identification' | 'triangle_application';
+
 export interface GameSessionData {
   id: number;
   user_id: number;
+  game_mode: GameMode;
   started_at: string;
   finished_at: string | null;
   final_score: number;
@@ -51,23 +54,37 @@ export interface ShotData {
   shot_at: string;
   coordinate_x: number;
   coordinate_y: number;
-  trig_function: TrigFunction;
-  expected_ratio: BackendRatio;
-  selected_ratio: BackendRatio;
+  trig_function: TrigFunction | null;
+  expected_ratio: BackendRatio | null;
+  selected_ratio: BackendRatio | null;
+  expected_function: TrigFunction | null;
+  selected_function: TrigFunction | null;
   is_correct: boolean;
   created_at: string;
   updated_at: string;
 }
 
-export interface RecordShotPayload {
+interface BaseShotPayload {
   shot_at: string;
   coordinate_x: number;
   coordinate_y: number;
+  is_correct: boolean;
+}
+
+/** Disparo del Juego 1 (identificar razón): se dispara una fórmula (CO/H, CA/H, CO/CA) */
+export interface RatioShotPayload extends BaseShotPayload {
   trig_function: TrigFunction;
   expected_ratio: BackendRatio;
   selected_ratio: BackendRatio;
-  is_correct: boolean;
 }
+
+/** Disparo del Juego 2 (aplicación en triángulo): se dispara un nombre de función */
+export interface FunctionShotPayload extends BaseShotPayload {
+  expected_function: TrigFunction;
+  selected_function: TrigFunction;
+}
+
+export type RecordShotPayload = RatioShotPayload | FunctionShotPayload;
 
 export interface FinishSessionPayload {
   finished_at: string;

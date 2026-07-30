@@ -1,6 +1,3 @@
-import type { RatioLabel } from '../types';
-import { ALL_RATIOS } from './constants';
-
 /**
  * Genera un número aleatorio entre min y max (inclusivo)
  */
@@ -9,10 +6,12 @@ export function randomInt(min: number, max: number): number {
 }
 
 /**
- * Devuelve las fórmulas incorrectas para una razón dada (las otras 2 de las 3 posibles)
+ * Devuelve las etiquetas incorrectas de un pool de 3 posibles (las otras 2, sin la correcta).
+ * Genérico: sirve tanto para fórmulas (CO/H, CA/H, CO/CA) como para nombres de función
+ * (seno, coseno, tangente).
  */
-export function getWrongRatios(correctRatio: RatioLabel): RatioLabel[] {
-  return ALL_RATIOS.filter((ratio) => ratio !== correctRatio);
+export function getOtherLabels<T>(pool: T[], correct: T): T[] {
+  return pool.filter((label) => label !== correct);
 }
 
 /**

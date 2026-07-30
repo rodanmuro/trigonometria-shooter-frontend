@@ -1,50 +1,57 @@
 import Phaser from 'phaser';
 import { Crosshair } from '../entities/Crosshair';
 import { ShotMarker } from '../entities/ShotMarker';
-import { TrigQuestionGenerator } from '../systems/QuestionGenerator';
-import { QuestionDisplay } from '../components/QuestionDisplay';
 import { CardSpawner } from '../systems/CardSpawner';
 import { ScoreManager } from '../systems/ScoreManager';
 import { ScoreDisplay } from '../components/ScoreDisplay';
 import { AudioManager } from '../managers/AudioManager';
 import { ProgressionManager } from '../managers/ProgressionManager';
 import { SessionTimer } from '../components/SessionTimer';
-import { GAME_CONFIG, RATIO_TO_BACKEND } from '../utils/constants';
+import { GAME_CONFIG } from '../utils/constants';
 import { sessionApiService } from '../services/sessionApiService';
 import { shotApiService } from '../services/shotApiService';
 import type { Card } from '../entities/Card';
-import type { RecordShotPayload, FinishedSessionData } from '../types/api';
+import type { RecordShotPayload, FinishedSessionData, GameMode } from '../types/api';
 
-export class GameScene extends Phaser.Scene {
-  private crosshair!: Crosshair;
-  private questionGenerator!: TrigQuestionGenerator;
-  private questionDisplay!: QuestionDisplay;
-  private cardSpawner!: CardSpawner;
-  private scoreManager!: ScoreManager;
-  private scoreDisplay!: ScoreDisplay;
-  private audioManager!: AudioManager;
-  private progressionManager!: ProgressionManager;
-  private sessionTimer!: Phaser.Time.TimerEvent;
-  private sessionTimerDisplay!: SessionTimer;
-  private sessionEnded: boolean = false;
-  private sessionId: number | null = null;
-  private lastFinishedSessionData: FinishedSessionData | null = null;
+/**
+ * Infraestructura genérica compartida por ambos juegos: ciclo de vida de la
+ * sesión, timer, puntaje, progresión de velocidad, pantallas de resumen y el
+ * flujo de disparo (mira, colisión con las cartas). Cada juego solo define
+ * cómo se genera/muestra su "pregunta" y qué payload manda por cada disparo.
+ */
+export abstract class BaseGameScene extends Phaser.Scene {
+  protected crosshair!: Crosshair;
+  protected cardSpawner!: CardSpawner;
+  protected scoreManager!: ScoreManager;
+  protected scoreDisplay!: ScoreDisplay;
+  protected audioManager!: AudioManager;
+  protected progressionManager!: ProgressionManager;
+  protected sessionTimer!: Phaser.Time.TimerEvent;
+  protected sessionTimerDisplay!: SessionTimer;
+  protected sessionEnded: boolean = false;
+  protected sessionId: number | null = null;
+  protected lastFinishedSessionData: FinishedSessionData | null = null;
 
-  constructor() {
-    super({ key: 'GameScene' });
-  }
+  protected abstract gameMode: GameMode;
+
+  /** Crea el display de pregunta del juego y dispara la primera ronda */
+  protected abstract initQuestion(): void;
+
+  /** Arma una nueva pregunta, actualiza el display y reinicia el spawn de cartas */
+  protected abstract generateNewQuestion(): void;
+
+  /** Arma el payload específico del juego para el disparo que impactó una carta */
+  protected abstract buildShotPayload(hitCard: Card, x: number, y: number): RecordShotPayload;
+
+  protected abstract onCorrectFeedback(): void;
+  protected abstract onWrongFeedback(): void;
 
   create(): void {
-    console.log('GameScene: Game started!');
-
     this.createGameSession();
 
     this.input.setDefaultCursor('none');
 
     this.crosshair = new Crosshair(this);
-
-    this.questionGenerator = new TrigQuestionGenerator();
-    this.questionDisplay = new QuestionDisplay(this);
 
     this.cardSpawner = new CardSpawner(this);
 
@@ -74,7 +81,7 @@ export class GameScene extends Phaser.Scene {
       }
     });
 
-    this.generateNewQuestion();
+    this.initQuestion();
 
     this.input.on('pointerdown', this.onShoot, this);
   }
@@ -109,58 +116,35 @@ export class GameScene extends Phaser.Scene {
       if (wasCorrect) {
         this.scoreManager.addCorrectHit();
         hitCard.showHitCorrectEffect();
-        this.questionDisplay.showCorrectFeedback();
+        this.onCorrectFeedback();
       } else {
         this.scoreManager.addWrongHit();
         hitCard.showHitWrongEffect();
-        this.questionDisplay.showWrongFeedback();
+        this.onWrongFeedback();
       }
 
+      const payload = this.buildShotPayload(hitCard, pointer.x, pointer.y);
       this.cardSpawner.removeCard(hitCard);
 
-      this.recordShotToBackend(hitCard, pointer.x, pointer.y);
+      this.recordShotToBackend(payload);
     }
   }
 
   /**
    * Envía el disparo al backend si hay sesión activa
    */
-  private async recordShotToBackend(hitCard: Card, x: number, y: number): Promise<void> {
+  private async recordShotToBackend(payload: RecordShotPayload): Promise<void> {
     try {
       if (!this.sessionId) {
         console.warn('No hay sessionId; no se registrará el disparo en backend');
         return;
       }
 
-      const question = this.questionGenerator.getCurrentQuestion();
-      if (!question) {
-        console.warn('No hay pregunta actual; no se registrará el disparo');
-        return;
-      }
-
-      const payload: RecordShotPayload = {
-        shot_at: new Date().toISOString(),
-        coordinate_x: x,
-        coordinate_y: y,
-        trig_function: question.trigFunction,
-        expected_ratio: RATIO_TO_BACKEND[question.correctRatio],
-        selected_ratio: RATIO_TO_BACKEND[hitCard.getValue()],
-        is_correct: hitCard.isCorrect()
-      };
-
       const result = await shotApiService.recordShot(this.sessionId, payload);
       console.log('Disparo registrado en backend:', result);
     } catch (error) {
       console.error('Error registrando disparo en backend:', error);
     }
-  }
-
-  private generateNewQuestion(): void {
-    const question = this.questionGenerator.generateQuestion();
-    this.questionDisplay.setQuestion(question);
-    this.cardSpawner.startSpawning(question);
-
-    console.log(`Nueva pregunta: ${question.trigFunction} = ${question.correctRatio}`);
   }
 
   /**
@@ -200,7 +184,7 @@ export class GameScene extends Phaser.Scene {
       hold: 800,
       onComplete: () => {
         notification.destroy();
-        // Cambiar de razón trigonométrica recién al subir de nivel, no en cada acierto
+        // Cambiar de pregunta recién al subir de nivel, no en cada acierto
         this.generateNewQuestion();
       }
     });
@@ -215,7 +199,7 @@ export class GameScene extends Phaser.Scene {
       const canvasW = this.cameras.main.width;
       const canvasH = this.cameras.main.height;
 
-      const session = await sessionApiService.createSession(startedAt, canvasW, canvasH);
+      const session = await sessionApiService.createSession(startedAt, canvasW, canvasH, this.gameMode);
       this.sessionId = session.id;
 
       console.log(`✅ Sesión de juego creada: ${this.sessionId}`);

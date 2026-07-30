@@ -46,8 +46,8 @@ export class PreloadScene extends Phaser.Scene {
       const user = authManager.getUser();
       console.log('Usuario autenticado:', user?.name);
       console.log('Iniciando juego directamente...');
-      // Si está autenticado, ir directo al juego
-      this.scene.start('GameScene');
+      // Si está autenticado, ir directo al menú de selección de juego
+      this.scene.start('MenuScene');
     } else {
       console.log('Usuario no autenticado, mostrando pantalla de login...');
       // Si no está autenticado, mostrar pantalla de login

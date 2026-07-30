@@ -218,7 +218,7 @@ export class LoginScene extends Phaser.Scene {
 
       this.time.delayedCall(2000, () => {
         this.scene.stop('LoginScene');
-        this.scene.start('GameScene');
+        this.scene.start('MenuScene');
       });
 
     } catch (error) {
