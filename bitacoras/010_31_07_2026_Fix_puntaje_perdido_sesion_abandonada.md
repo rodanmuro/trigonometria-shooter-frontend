@@ -35,8 +35,12 @@ y complica el envío del header de autenticación al momento de descarga de la p
 
 ## Despliegue
 
-Pendiente — subir build nuevo del frontend y los cambios del backend por FTP.
+`npm run build`, `.htaccess.production` copiado a `dist/.htaccess`, subido por FTP
+(`lftp mirror -R`, sin `--delete` para no tocar la carpeta hermana `api/` dentro del
+mismo directorio remoto `public_html/trigonometria/`). Verificado en producción: el
+HTML servido referencia el bundle nuevo (`assets/index-4ULvXCbY.js`), `https://voyeducando.com/trigonometria/`
+responde 200.
 
 ## Checkpoint
 
-✅ Implementado y probado localmente. Pendiente desplegar a producción.
+✅ Implementado, probado y **desplegado en producción**.
