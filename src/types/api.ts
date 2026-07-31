@@ -69,6 +69,9 @@ interface BaseShotPayload {
   coordinate_x: number;
   coordinate_y: number;
   is_correct: boolean;
+  /** Snapshot del puntaje/tiempo transcurrido al momento del disparo (ver ShotController::checkpointSession) */
+  current_score?: number;
+  elapsed_seconds?: number;
 }
 
 /** Disparo del Juego 1 (identificar razón): se dispara una fórmula (CO/H, CA/H, CO/CA) */

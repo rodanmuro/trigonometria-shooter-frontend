@@ -126,6 +126,11 @@ export abstract class BaseGameScene extends Phaser.Scene {
       const payload = this.buildShotPayload(hitCard, pointer.x, pointer.y);
       this.cardSpawner.removeCard(hitCard);
 
+      payload.current_score = this.scoreManager.getScore();
+      payload.elapsed_seconds = this.sessionTimer
+        ? Math.floor(this.sessionTimer.getElapsed() / 1000)
+        : 0;
+
       this.recordShotToBackend(payload);
     }
   }
