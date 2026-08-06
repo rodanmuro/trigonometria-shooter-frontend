@@ -38,10 +38,12 @@ multiplication-shooter (`StatsScene`).
 
 ## Despliegue
 
-`npm run build`, subido por FTP a `public_html/trigonometria/`. Sitio responde 200 y
-sirve el bundle nuevo (`assets/index-OCBEnwnK.js`).
+`npm run build`, subido por FTP a `public_html/trigonometria/` (dos veces: la vista
+inicial, y luego con el filtro `min_score` agregado). Sitio responde 200 y sirve el
+bundle final (`assets/index-D8Lu36LE.js`).
 
 ## Checkpoint
 
-✅ Implementado, probado (tipos/build/tests) y desplegado en producción. Verificación
-visual pendiente de confirmación del usuario con su login real.
+✅ Implementado, probado (tipos/build/tests) y desplegado en producción (incluye el
+filtro de puntaje mínimo). Verificación visual pendiente de confirmación del usuario
+con su login real.
