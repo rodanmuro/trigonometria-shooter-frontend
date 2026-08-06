@@ -423,14 +423,14 @@ export default class AdminScene extends Phaser.Scene {
       const to = this.sessionsPagination.to || 0;
       const total = this.sessionsPagination.total;
       this.add
-        .text(100, 220, `Mostrando ${from}-${to} de ${total} sesiones`, {
+        .text(100, 235, `Mostrando ${from}-${to} de ${total} sesiones`, {
           fontSize: '16px',
           color: '#aaaaaa',
         })
         .setData('clearable', true);
     }
 
-    const tableY = 250;
+    const tableY = 265;
     const headers = ['#', 'Fecha', 'Hora', 'Puntuación', 'Modo', 'Disparos', 'Aciertos', 'Precisión'];
     const positions = [centerX - 500, centerX - 430, centerX - 300, centerX - 150, centerX - 20, centerX + 100, centerX + 220, centerX + 360];
 
@@ -459,10 +459,12 @@ export default class AdminScene extends Phaser.Scene {
     if (!this.sessionsSummary) return;
 
     const s = this.sessionsSummary;
-    const summaryText = `Total: ${s.total_sessions} sesiones | Promedio: ${s.avg_score} pts | Mejor: ${s.best_score} pts | Tiempo jugado: ${s.total_playtime_minutes} min`;
+    const summaryText =
+      `Total: ${s.total_sessions} sesiones válidas | Promedio: ${s.avg_score} pts | Mejor: ${s.best_score} pts | Tiempo jugado: ${s.total_playtime_minutes} min\n` +
+      `Razones: ${s.total_sessions_ratio} válidos | Triángulo: ${s.total_sessions_triangle} válidos`;
 
     this.add
-      .rectangle(centerX, y, 900, 30, 0x1a2744, 0.9)
+      .rectangle(centerX, y, 900, 48, 0x1a2744, 0.9)
       .setStrokeStyle(1, 0x4ecdc4)
       .setData('clearable', true);
 
@@ -470,6 +472,8 @@ export default class AdminScene extends Phaser.Scene {
       .text(centerX, y, summaryText, {
         fontSize: '14px',
         color: '#4ecdc4',
+        align: 'center',
+        lineSpacing: 8,
       })
       .setOrigin(0.5)
       .setData('clearable', true);
@@ -480,7 +484,7 @@ export default class AdminScene extends Phaser.Scene {
     this.filterContainer.id = 'admin-filters';
     this.filterContainer.style.cssText = `
       position: absolute;
-      top: 175px;
+      top: 190px;
       left: 50%;
       transform: translateX(-50%);
       display: flex;

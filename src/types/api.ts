@@ -141,6 +141,8 @@ export interface AdminGroupsResponse {
 
 export interface UserSessionSummary {
   total_sessions: number;
+  total_sessions_ratio: number;
+  total_sessions_triangle: number;
   avg_score: number;
   best_score: number;
   total_playtime_minutes: number;
