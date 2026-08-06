@@ -36,9 +36,10 @@ multiplication-shooter (`StatsScene`).
 
 ## Despliegue
 
-Pendiente.
+`npm run build`, subido por FTP a `public_html/trigonometria/`. Sitio responde 200 y
+sirve el bundle nuevo (`assets/index-OCBEnwnK.js`).
 
 ## Checkpoint
 
-✅ Implementado y probado (tipos/build/tests). Verificación visual pendiente de
-confirmación del usuario en producción.
+✅ Implementado, probado (tipos/build/tests) y desplegado en producción. Verificación
+visual pendiente de confirmación del usuario con su login real.
