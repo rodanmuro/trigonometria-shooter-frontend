@@ -170,6 +170,35 @@ export interface SessionListItemWithRow {
   updated_at: string;
 }
 
+/** Fila de sesión propia del estudiante (GET /sessions) — subconjunto de SessionListItemWithRow, sin datos de otro usuario */
+export interface MySessionListItem {
+  row_number: number;
+  id: number;
+  game_mode: GameMode;
+  started_at: string;
+  finished_at: string | null;
+  final_score: number;
+  duration_seconds: number;
+  total_shots: number;
+  correct_shots: number;
+  wrong_shots: number;
+  accuracy: number;
+}
+
+export interface MySessionsResponse {
+  success: boolean;
+  summary: UserSessionSummary;
+  data: MySessionListItem[];
+  pagination: PaginationInfoExtended;
+}
+
+export interface MySessionsFilterParams {
+  page?: number;
+  date_from?: string;
+  date_to?: string;
+  per_page?: number;
+}
+
 export interface DateFiltersApplied {
   date_from: string | null;
   date_to: string | null;

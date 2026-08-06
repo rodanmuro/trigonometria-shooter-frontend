@@ -8,10 +8,24 @@ import type {
   GameSessionData,
   FinishSessionPayload,
   FinishedSessionData,
-  GameMode
+  GameMode,
+  MySessionsResponse,
+  MySessionsFilterParams
 } from '../types/api';
 
 export const sessionApiService = {
+  /**
+   * Listar las propias sesiones del usuario autenticado (su historial, con
+   * resumen igual al del panel admin pero limitado a sus propios datos)
+   */
+  async getMySessions(filters: MySessionsFilterParams = {}): Promise<MySessionsResponse> {
+    const response = await apiClient.get<MySessionsResponse>('/sessions', {
+      params: filters
+    });
+
+    return response.data;
+  },
+
   /**
    * Crear una nueva sesión de juego
    */

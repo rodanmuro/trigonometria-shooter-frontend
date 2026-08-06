@@ -39,24 +39,38 @@ export class MenuScene extends Phaser.Scene {
     );
     subtitle.setOrigin(0.5);
 
+    // 4 botones como máximo (admin) deben entrar en los 800px de alto del
+    // canvas; con centerY(400) + 140 de por medio, el 4to quedaba cortado.
+    const buttonStartY = 310;
+    const buttonSpacing = 125;
+
     this.createGameButton(
-      this.cameras.main.centerY,
+      buttonStartY,
       'JUEGO 1: Identificar razones',
       'Seno, coseno o tangente → ¿qué fórmula la resuelve?',
       () => this.scene.start('RatioIdentificationScene')
     );
 
     this.createGameButton(
-      this.cameras.main.centerY + 140,
+      buttonStartY + buttonSpacing,
       'JUEGO 2: Aplicar en el triángulo',
       'Un triángulo con datos → ¿qué razón resuelve X?',
       () => this.scene.start('TriangleApplicationScene')
     );
 
+    this.createGameButton(
+      buttonStartY + buttonSpacing * 2,
+      'MIS ESTADÍSTICAS',
+      'Ver mi historial de sesiones y mi progreso',
+      () => this.scene.start('StatsScene'),
+      0x1e4d2b,
+      0x2ecc71
+    );
+
     const user = AuthManager.getInstance().getUser();
     if (user?.profile === 'admin') {
       this.createGameButton(
-        this.cameras.main.centerY + 280,
+        buttonStartY + buttonSpacing * 3,
         'PANEL ADMIN',
         'Ver estudiantes, sesiones y cargar/exportar CSV',
         () => this.scene.start('AdminScene'),
