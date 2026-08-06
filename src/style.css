@@ -16,9 +16,16 @@
 body {
   margin: 0;
   display: flex;
-  place-items: center;
+  justify-content: center;
   min-width: 320px;
   min-height: 100vh;
+  /* Antes usaba place-items:center (también centrado vertical): si el
+     contenido (canvas de 800px + padding) es más alto que la ventana, el
+     centrado recorta partes de arriba y de abajo sin scroll para alcanzarlas
+     (ej. el botón "Siguiente" de la paginación, al fondo de la vista de
+     sesiones). Solo centramos horizontalmente y dejamos que la página
+     scrollee verticalmente cuando haga falta. */
+  overflow-y: auto;
 }
 
 #app {

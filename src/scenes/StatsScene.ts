@@ -147,7 +147,7 @@ export default class StatsScene extends Phaser.Scene {
     this.filterContainer.id = 'stats-filters';
     this.filterContainer.style.cssText = `
       position: absolute;
-      top: 135px;
+      top: ${this.getCanvasTopOffset() + 135}px;
       left: 50%;
       transform: translateX(-50%);
       display: flex;
@@ -361,6 +361,17 @@ export default class StatsScene extends Phaser.Scene {
       this.filterContainer.remove();
       this.filterContainer = null;
     }
+  }
+
+  /**
+   * Las barras de filtro son overlays HTML posicionados con `position:
+   * absolute` sobre toda la página (no sobre el canvas), así que necesitan
+   * sumar el offset real del canvas en la página (por el padding de #app,
+   * el centrado del body, etc.) para alinearse con las coordenadas
+   * internas del canvas — de lo contrario tapan contenido del canvas.
+   */
+  private getCanvasTopOffset(): number {
+    return this.game.canvas?.getBoundingClientRect().top ?? 0;
   }
 
   private getInputStyle(): string {
