@@ -175,6 +175,19 @@ export default class StatsScene extends Phaser.Scene {
     dateTo.value = this.filters.date_to || '';
     dateTo.style.cssText = this.getInputStyle();
 
+    const minScoreLabel = document.createElement('span');
+    minScoreLabel.textContent = 'Mín. puntos:';
+    minScoreLabel.style.color = '#aaa';
+    minScoreLabel.style.fontSize = '14px';
+
+    const minScoreInput = document.createElement('input');
+    minScoreInput.type = 'number';
+    minScoreInput.min = '0';
+    minScoreInput.step = '10';
+    minScoreInput.placeholder = '0';
+    minScoreInput.value = this.filters.min_score !== undefined ? String(this.filters.min_score) : '';
+    minScoreInput.style.cssText = this.getInputStyle() + 'width: 80px;';
+
     const applyBtn = document.createElement('button');
     applyBtn.textContent = 'Aplicar';
     applyBtn.style.cssText = `
@@ -189,6 +202,7 @@ export default class StatsScene extends Phaser.Scene {
     applyBtn.onclick = () => {
       this.filters.date_from = dateFrom.value || undefined;
       this.filters.date_to = dateTo.value || undefined;
+      this.filters.min_score = minScoreInput.value ? parseInt(minScoreInput.value, 10) : undefined;
       this.filters.page = 1;
       this.loadSessions();
     };
@@ -208,6 +222,7 @@ export default class StatsScene extends Phaser.Scene {
       this.filters = { page: 1 };
       dateFrom.value = '';
       dateTo.value = '';
+      minScoreInput.value = '';
       this.loadSessions();
     };
 
@@ -215,6 +230,8 @@ export default class StatsScene extends Phaser.Scene {
     this.filterContainer.appendChild(dateFrom);
     this.filterContainer.appendChild(document.createTextNode(' a '));
     this.filterContainer.appendChild(dateTo);
+    this.filterContainer.appendChild(minScoreLabel);
+    this.filterContainer.appendChild(minScoreInput);
     this.filterContainer.appendChild(applyBtn);
     this.filterContainer.appendChild(clearBtn);
 

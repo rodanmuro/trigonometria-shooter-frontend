@@ -14,9 +14,11 @@ multiplication-shooter (`StatsScene`).
 - `scenes/StatsScene.ts` (nuevo, escena independiente — mismo criterio que el proyecto
   de referencia, que tampoco comparte código entre `AdminScene` y `StatsScene`): título
   "MIS ESTADÍSTICAS", barra de resumen (mismo formato con desglose Razones/Triángulo que
-  se agregó al admin en el incremento anterior), filtro de fecha, tabla
-  (# Fecha Hora Puntuación Modo Disparos Aciertos Precisión), paginación. Sin selector de
-  usuario ni CSV/exportar (no aplica, es de un solo usuario: el propio).
+  se agregó al admin en el incremento anterior), filtro de fecha **y de puntaje mínimo**
+  (agregado después de que el usuario preguntó si existía, igual que en la lista de
+  usuarios del admin), tabla (# Fecha Hora Puntuación Modo Disparos Aciertos Precisión),
+  paginación. Sin selector de usuario ni CSV/exportar (no aplica, es de un solo usuario:
+  el propio).
 - `scenes/MenuScene.ts`: nuevo botón "MIS ESTADÍSTICAS" (verde), **siempre visible** para
   cualquier usuario logueado (a diferencia del botón de admin, condicional). Se
   recalculó el espaciado vertical de los botones del menú (`buttonStartY`/`buttonSpacing`

@@ -196,6 +196,7 @@ export interface MySessionsFilterParams {
   page?: number;
   date_from?: string;
   date_to?: string;
+  min_score?: number;
   per_page?: number;
 }
 
