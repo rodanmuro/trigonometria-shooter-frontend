@@ -49,9 +49,10 @@ primera captura de prueba).
 
 ## Despliegue
 
-Pendiente.
+`npm run build`, subido por FTP a `public_html/trigonometria/`. Sitio responde 200 y
+sirve el bundle nuevo (`assets/index-xWjMhAU8.js`); multiplication-shooter sigue sano.
 
 ## Checkpoint
 
-✅ Bug reproducido, causa raíz identificada y corregida, verificado visualmente
-end-to-end (con datos simulados). Pendiente desplegar a producción.
+✅ Bug reproducido, causa raíz identificada, corregido, verificado visualmente
+end-to-end (con datos simulados) y **desplegado en producción**.
