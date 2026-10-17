@@ -262,6 +262,17 @@ export function doubleClickSceneText(key: string, label: string): void {
     });
 }
 
+/**
+ * Espera a que la sesión del backend esté asignada a la escena (la respuesta de POST /sessions ya llegó).
+ * Que la petición haya salido no basta: hasta que llega la respuesta `sessionId` es null, y terminar o
+ * disparar antes no habla con el backend.
+ */
+export function expectSessionId(key: string, id: number): void {
+  cy.window({ log: false }).should((win) => {
+    expect(getScene(win, key).sessionId, `sessionId de ${key}`).to.equal(id);
+  });
+}
+
 /** Cantidad de capas oscuras (rectángulos a profundidad 3000) del resumen de sesión. */
 export function overlayCount(win: Window, key: string): number {
   return getScene(win, key).children.list.filter((o: AnyObj) => o.type === 'Rectangle' && o.depth === 3000).length;

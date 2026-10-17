@@ -47,6 +47,12 @@ export abstract class BaseGameScene extends Phaser.Scene {
   protected abstract onWrongFeedback(): void;
 
   create(): void {
+    // scene.restart() reutiliza la misma instancia: los campos de estado de la
+    // partida anterior hay que reiniciarlos aquí, no solo al declararlos.
+    this.sessionEnded = false;
+    this.sessionId = null;
+    this.lastFinishedSessionData = null;
+
     this.createGameSession();
 
     this.input.setDefaultCursor('none');
@@ -501,7 +507,10 @@ export abstract class BaseGameScene extends Phaser.Scene {
       yesButton.destroy();
       noButton.destroy();
 
-      this.showSessionSummary();
+      // En el fotograma siguiente: showSessionSummary() registra un
+      // input.once('pointerdown') y, si se registrara ahora, este mismo clic lo
+      // dispararía y volvería a mostrar la confirmación.
+      this.time.delayedCall(0, () => this.showSessionSummary());
     });
   }
 }
