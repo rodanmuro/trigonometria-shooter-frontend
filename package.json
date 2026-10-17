@@ -9,10 +9,19 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck:tests": "tsc -p tests/tsconfig.json"
+    "typecheck:tests": "tsc -p tests/tsconfig.json",
+    "dev:e2e": "VITE_API_URL=/api VITE_GOOGLE_CLIENT_ID=test-client-id.apps.googleusercontent.com vite --host 127.0.0.1 --port 5174 --strictPort --no-open",
+    "cypress:run": "env -u ELECTRON_RUN_AS_NODE cypress run",
+    "cypress:open": "env -u ELECTRON_RUN_AS_NODE cypress open",
+    "e2e": "start-server-and-test dev:e2e http://127.0.0.1:5174/ cypress:run",
+    "e2e:open": "start-server-and-test dev:e2e http://127.0.0.1:5174/ cypress:open",
+    "typecheck:e2e": "tsc -p cypress/tsconfig.json",
+    "e2e:update-snapshots": "UPDATE_SNAPSHOTS=1 npm run e2e"
   },
   "devDependencies": {
+    "cypress": "^14.5.4",
     "jsdom": "^26.1.0",
+    "start-server-and-test": "^3.0.13",
     "typescript": "~5.9.3",
     "vite": "^7.3.6",
     "vitest": "^3.2.7"
