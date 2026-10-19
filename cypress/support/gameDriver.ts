@@ -448,3 +448,211 @@ export function correctLabel(win: Window): string {
   const q = scene.questionGenerator.getCurrentQuestion();
   return q.correctRatio ?? q.correctFunction;
 }
+
+/* ------------------------------------------------------------------ */
+/* Instantáneas (snapshots)                                             */
+/* ------------------------------------------------------------------ */
+
+const round = (n: number) => Math.round(n * 100) / 100;
+
+function maskYear(text: string): string {
+  return text.replace(new RegExp(String(new Date().getFullYear()), 'g'), '<AÑO>');
+}
+
+/**
+ * Fechas y horas dependen de la zona horaria y del idioma del equipo (AdminScene y StatsScene usan
+ * toLocaleDateString() sin idioma); se enmascaran en las instantáneas para que sean iguales en cualquier
+ * máquina. El formato de las fechas se comprueba aparte, con expresiones regulares, en los specs.
+ */
+export function maskVolatile(text: string): string {
+  return text
+    .replace(/^\d{1,4}[/.-]\d{1,2}[/.-]\d{1,4}[,]? \d{1,2}:\d{2}.*$/, '<FECHA> <HORA>')
+    .replace(/^\d{1,4}[/.-]\d{1,2}[/.-]\d{1,4}$/, '<FECHA>')
+    .replace(/^\d{1,2}:\d{2}.{0,4}$/, '<HORA>');
+}
+
+function describeGameObject(obj: AnyObj, out: AnyObj[]): void {
+  if (obj.type === 'Container') {
+    for (const child of obj.list) describeGameObject(child, out);
+    return;
+  }
+  const m = obj.getWorldTransformMatrix ? obj.getWorldTransformMatrix() : { tx: obj.x, ty: obj.y };
+  const base = {
+    type: obj.type as string,
+    x: round(m.tx),
+    y: round(m.ty),
+    depth: obj.depth,
+    alpha: obj.alpha,
+    visible: obj.visible,
+    interactive: !!obj.input,
+  };
+  if (obj.type === 'Text') {
+    const st = obj.style;
+    out.push({
+      ...base,
+      text: maskVolatile(obj.text as string),
+      origin: [obj.originX, obj.originY],
+      fontSize: st.fontSize,
+      color: st.color,
+      fontStyle: st.fontStyle || undefined,
+      backgroundColor: st.backgroundColor || undefined,
+      strokeThickness: st.strokeThickness || undefined,
+    });
+  } else if (obj.type === 'Rectangle') {
+    out.push({
+      ...base,
+      width: round(obj.width),
+      height: round(obj.height),
+      fillColor: obj.fillColor,
+      fillAlpha: obj.fillAlpha,
+      stroke: obj.isStroked ? { color: obj.strokeColor, width: obj.lineWidth } : undefined,
+    });
+  } else {
+    out.push(base);
+  }
+}
+
+/**
+ * Lista de objetos de la escena (textos, rectángulos, etc.) en una forma estable: posición en
+ * el mundo, estilo y estado. Se ordena por posición, así que no depende del orden de creación.
+ */
+export function snapshotScene(scene: AnyObj): AnyObj[] {
+  const out: AnyObj[] = [];
+  for (const obj of scene.children.list) describeGameObject(obj, out);
+  const key = (o: AnyObj) => [o.y, o.x, o.type, o.text ?? '', o.depth].join('|');
+  return out.sort((a, b) => (key(a) < key(b) ? -1 : key(a) > key(b) ? 1 : 0));
+}
+
+const STYLE_PROPS = [
+  'position', 'top', 'left', 'display', 'flexWrap', 'gap', 'alignItems', 'justifyContent',
+  'backgroundColor', 'color', 'fontSize', 'padding', 'borderRadius', 'border', 'zIndex', 'cursor',
+];
+
+function describeElement(el: Element, win: Window): AnyObj {
+  const cs = win.getComputedStyle(el);
+  const style: Record<string, string> = {};
+  for (const prop of STYLE_PROPS) style[prop] = (cs as AnyObj)[prop];
+  const node: AnyObj = { tag: el.tagName.toLowerCase(), style };
+  for (const attr of ['type', 'min', 'step', 'placeholder', 'id']) {
+    if (el.getAttribute(attr) !== null) node[attr] = el.getAttribute(attr);
+  }
+  const tag = el.tagName.toLowerCase();
+  const field = el as AnyObj;
+  if (tag === 'input') node.value = maskYear(field.value as string);
+  if (tag === 'select') {
+    node.value = field.value;
+    node.options = Array.from(field.options as AnyObj[]).map((o: AnyObj) => ({
+      value: o.value,
+      text: o.textContent,
+      selected: o.selected,
+    }));
+  } else if (tag !== 'input' && el.children.length === 0) {
+    node.text = maskYear(el.textContent ?? '');
+  } else {
+    node.children = Array.from(el.childNodes)
+      .filter((c) => c.nodeType === 1 || (c.nodeType === 3 && (c.textContent ?? '').trim() !== ''))
+      .map((c) => (c.nodeType === 1 ? describeElement(c as Element, win) : { text: (c.textContent ?? '').trim() }));
+  }
+  return node;
+}
+
+/** Estructura y estilos calculados de un elemento del DOM (la barra de filtros). */
+export function snapshotElement(win: Window, el: Element): AnyObj {
+  return describeElement(el, win);
+}
+
+/**
+ * Compara la escena (y opcionalmente un elemento del DOM) con cypress/snapshots/<name>.json.
+ * Antes de capturar mueve el puntero fuera de los botones para neutralizar los estilos de hover.
+ */
+export function expectSnapshot(
+  name: string,
+  options: { scene: string; dom?: (win: Window) => Element | null }
+): void {
+  cy.get('canvas').trigger('mousemove', 2, 2);
+  waitFrames(3);
+  cy.window({ log: false })
+    .then((win) => {
+      const data: AnyObj = { escena: snapshotScene(getScene(win, options.scene)) };
+      if (options.dom) {
+        const el = options.dom(win);
+        data.dom = el ? snapshotElement(win, el) : null;
+      }
+      return data;
+    })
+    .then((data) => {
+      cy.task('matchSnapshot', { name, data: data.dom === undefined ? data.escena : data });
+    });
+}
+
+/** Estilo de un texto de la escena (para comprobar colores sin depender de la instantánea). */
+export function expectTextColor(key: string, label: string | RegExp, color: string): void {
+  cy.window({ log: false }).should((win) => {
+    const matches = textObjects(getScene(win, key)).filter((t) =>
+      typeof label === 'string' ? t.text === label : label.test(t.text)
+    );
+    expect(matches.length, `texto ${String(label)} en ${key}`).to.be.greaterThan(0);
+    expect(matches[0].style.color, `color de ${String(label)}`).to.equal(color);
+  });
+}
+
+/* ------------------------------------------------------------------ */
+/* Estadísticas y panel de administración                               */
+/* ------------------------------------------------------------------ */
+
+/** Desde el menú, abre "Mis estadísticas" (camino real del estudiante). */
+export function openStatsFromMenu(): Cypress.Chainable<AnyObj> {
+  waitForScene('MenuScene');
+  clickSceneText('MenuScene', 'MIS ESTADÍSTICAS');
+  return waitForScene('StatsScene');
+}
+
+/** Desde el menú, abre el panel de administración (solo para el perfil admin). */
+export function openAdminFromMenu(): Cypress.Chainable<AnyObj> {
+  waitForScene('MenuScene');
+  clickSceneText('MenuScene', 'PANEL ADMIN');
+  return waitForScene('AdminScene');
+}
+
+/** Barras de filtros HTML de StatsScene (id `stats-filters`; pueden acumularse). */
+export function statsFilterBars(win: Window): Element[] {
+  return Array.from(win.document.querySelectorAll('#stats-filters'));
+}
+
+/** Barra de filtros HTML del panel de administración. */
+export function adminFilterBar(win: Window): Element | null {
+  return win.document.getElementById('admin-filters');
+}
+
+/** Click en una fila de la tabla de usuarios (0 = la primera). */
+export function clickAdminUserRow(index: number): void {
+  clickGame(GAME_WIDTH / 2, 230 + index * 40);
+}
+
+/**
+ * Simula el selector de archivos del navegador. AdminScene crea un <input type="file"> que nunca
+ * entra al DOM y lo abre con .click(), así que no se puede usar cy.selectFile: se intercepta
+ * HTMLInputElement.click() para entregarle un archivo y disparar su evento "change".
+ * Devuelve (por alias) lo que la escena configuró en el input.
+ */
+export function stubFilePicker(file: { name: string; content: string }): void {
+  cy.window({ log: false }).then((win) => {
+    const proto = win.HTMLInputElement.prototype;
+    const original = proto.click;
+    const picked: { accept?: string; type?: string } = {};
+    (win as AnyObj).__filePicker = picked;
+    proto.click = function (this: HTMLInputElement) {
+      if (this.type !== 'file') return original.call(this);
+      picked.accept = this.accept;
+      picked.type = this.type;
+      const transfer = new win.DataTransfer();
+      transfer.items.add(new win.File([file.content], file.name, { type: 'text/csv' }));
+      this.files = transfer.files;
+      this.dispatchEvent(new win.Event('change'));
+    };
+  });
+}
+
+export function pickedFile(win: Window): { accept?: string; type?: string } {
+  return (win as AnyObj).__filePicker;
+}

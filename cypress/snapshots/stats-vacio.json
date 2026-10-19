@@ -1,0 +1,211 @@
+{
+  "escena": [
+    {"type":"Rectangle","x":600,"y":100,"depth":0,"alpha":1,"visible":true,"interactive":false,"width":900,"height":48,"fillColor":1713988,"fillAlpha":0.9,"stroke":{"color":5164484,"width":1}},
+    {"type":"Text","x":600,"y":100,"depth":0,"alpha":1,"visible":true,"interactive":false,"text":"Total: 0 sesiones válidas | Promedio: 0 pts | Mejor: 0 pts | Tiempo jugado: 0 min\nRazones: 0 válidos | Triángulo: 0 válidos","origin":[0.5,0.5],"fontSize":"14px","color":"#4ecdc4"},
+    {"type":"Text","x":100,"y":200,"depth":0,"alpha":1,"visible":true,"interactive":false,"text":"Mostrando 0-0 de 0 sesiones","origin":[0,0],"fontSize":"16px","color":"#aaaaaa"},
+    {"type":"Text","x":100,"y":230,"depth":101,"alpha":1,"visible":true,"interactive":false,"text":"#","origin":[0,0.5],"fontSize":"15px","color":"#ffff00","fontStyle":"bold"},
+    {"type":"Text","x":170,"y":230,"depth":101,"alpha":1,"visible":true,"interactive":false,"text":"Fecha","origin":[0,0.5],"fontSize":"15px","color":"#ffff00","fontStyle":"bold"},
+    {"type":"Text","x":300,"y":230,"depth":101,"alpha":1,"visible":true,"interactive":false,"text":"Hora","origin":[0,0.5],"fontSize":"15px","color":"#ffff00","fontStyle":"bold"},
+    {"type":"Text","x":450,"y":230,"depth":101,"alpha":1,"visible":true,"interactive":false,"text":"Puntuación","origin":[0,0.5],"fontSize":"15px","color":"#ffff00","fontStyle":"bold"},
+    {"type":"Text","x":580,"y":230,"depth":101,"alpha":1,"visible":true,"interactive":false,"text":"Modo","origin":[0,0.5],"fontSize":"15px","color":"#ffff00","fontStyle":"bold"},
+    {"type":"Rectangle","x":600,"y":230,"depth":100,"alpha":1,"visible":true,"interactive":false,"width":1100,"height":35,"fillColor":1710638,"fillAlpha":1,"stroke":{"color":16776960,"width":2}},
+    {"type":"Text","x":700,"y":230,"depth":101,"alpha":1,"visible":true,"interactive":false,"text":"Disparos","origin":[0,0.5],"fontSize":"15px","color":"#ffff00","fontStyle":"bold"},
+    {"type":"Text","x":820,"y":230,"depth":101,"alpha":1,"visible":true,"interactive":false,"text":"Aciertos","origin":[0,0.5],"fontSize":"15px","color":"#ffff00","fontStyle":"bold"},
+    {"type":"Text","x":960,"y":230,"depth":101,"alpha":1,"visible":true,"interactive":false,"text":"Precisión","origin":[0,0.5],"fontSize":"15px","color":"#ffff00","fontStyle":"bold"},
+    {"type":"Text","x":50,"y":25,"depth":0,"alpha":1,"visible":true,"interactive":true,"text":"← Volver al Menú","origin":[0,0.5],"fontSize":"16px","color":"#ffffff","backgroundColor":"#333333"},
+    {"type":"Text","x":600,"y":25,"depth":0,"alpha":1,"visible":true,"interactive":false,"text":"MIS ESTADÍSTICAS","origin":[0.5,0.5],"fontSize":"28px","color":"#ffff00","fontStyle":"bold"},
+    {"type":"Rectangle","x":600,"y":400,"depth":0,"alpha":1,"visible":true,"interactive":false,"width":1200,"height":800,"fillColor":986910,"fillAlpha":1},
+    {"type":"Text","x":600,"y":60,"depth":0,"alpha":1,"visible":true,"interactive":false,"text":"Ana Pérez","origin":[0.5,0.5],"fontSize":"16px","color":"#aaaaaa"},
+    {"type":"Text","x":600,"y":740,"depth":0,"alpha":1,"visible":true,"interactive":false,"text":"Página 1 de 1","origin":[0.5,0.5],"fontSize":"18px","color":"#ffffff"}
+  ],
+  "dom": {
+    "tag": "div",
+    "style": {
+      "position": "absolute",
+      "top": "167px",
+      "left": "640px",
+      "display": "flex",
+      "flexWrap": "nowrap",
+      "gap": "10px",
+      "alignItems": "center",
+      "justifyContent": "normal",
+      "backgroundColor": "rgba(26, 26, 46, 0.95)",
+      "color": "rgba(255, 255, 255, 0.87)",
+      "fontSize": "16px",
+      "padding": "10px 20px",
+      "borderRadius": "8px",
+      "border": "1px solid rgb(51, 51, 51)",
+      "zIndex": "1000",
+      "cursor": "auto"
+    },
+    "id": "stats-filters",
+    "children": [
+      {
+        "tag": "span",
+        "style": {
+          "position": "static",
+          "top": "auto",
+          "left": "auto",
+          "display": "block",
+          "flexWrap": "nowrap",
+          "gap": "normal",
+          "alignItems": "normal",
+          "justifyContent": "normal",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(170, 170, 170)",
+          "fontSize": "14px",
+          "padding": "0px",
+          "borderRadius": "0px",
+          "border": "0px none rgb(170, 170, 170)",
+          "zIndex": "auto",
+          "cursor": "auto"
+        },
+        "text": "Filtrar por fecha:"
+      },
+      {
+        "tag": "input",
+        "style": {
+          "position": "static",
+          "top": "auto",
+          "left": "auto",
+          "display": "block",
+          "flexWrap": "nowrap",
+          "gap": "normal",
+          "alignItems": "normal",
+          "justifyContent": "normal",
+          "backgroundColor": "rgb(26, 26, 46)",
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px",
+          "padding": "8px 12px",
+          "borderRadius": "4px",
+          "border": "1px solid rgb(68, 68, 68)",
+          "zIndex": "auto",
+          "cursor": "default"
+        },
+        "type": "date",
+        "value": "",
+        "children": []
+      },
+      {
+        "text": "a"
+      },
+      {
+        "tag": "input",
+        "style": {
+          "position": "static",
+          "top": "auto",
+          "left": "auto",
+          "display": "block",
+          "flexWrap": "nowrap",
+          "gap": "normal",
+          "alignItems": "normal",
+          "justifyContent": "normal",
+          "backgroundColor": "rgb(26, 26, 46)",
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px",
+          "padding": "8px 12px",
+          "borderRadius": "4px",
+          "border": "1px solid rgb(68, 68, 68)",
+          "zIndex": "auto",
+          "cursor": "default"
+        },
+        "type": "date",
+        "value": "",
+        "children": []
+      },
+      {
+        "tag": "span",
+        "style": {
+          "position": "static",
+          "top": "auto",
+          "left": "auto",
+          "display": "block",
+          "flexWrap": "nowrap",
+          "gap": "normal",
+          "alignItems": "normal",
+          "justifyContent": "normal",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "color": "rgb(170, 170, 170)",
+          "fontSize": "14px",
+          "padding": "0px",
+          "borderRadius": "0px",
+          "border": "0px none rgb(170, 170, 170)",
+          "zIndex": "auto",
+          "cursor": "auto"
+        },
+        "text": "Mín. puntos:"
+      },
+      {
+        "tag": "input",
+        "style": {
+          "position": "static",
+          "top": "auto",
+          "left": "auto",
+          "display": "block",
+          "flexWrap": "nowrap",
+          "gap": "normal",
+          "alignItems": "normal",
+          "justifyContent": "normal",
+          "backgroundColor": "rgb(26, 26, 46)",
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px",
+          "padding": "8px 12px",
+          "borderRadius": "4px",
+          "border": "1px solid rgb(68, 68, 68)",
+          "zIndex": "auto",
+          "cursor": "text"
+        },
+        "type": "number",
+        "min": "0",
+        "step": "10",
+        "placeholder": "0",
+        "value": "",
+        "children": []
+      },
+      {
+        "tag": "button",
+        "style": {
+          "position": "static",
+          "top": "auto",
+          "left": "auto",
+          "display": "block",
+          "flexWrap": "nowrap",
+          "gap": "normal",
+          "alignItems": "flex-start",
+          "justifyContent": "normal",
+          "backgroundColor": "rgb(0, 102, 204)",
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px",
+          "padding": "8px 16px",
+          "borderRadius": "4px",
+          "border": "0px none rgb(255, 255, 255)",
+          "zIndex": "auto",
+          "cursor": "pointer"
+        },
+        "text": "Aplicar"
+      },
+      {
+        "tag": "button",
+        "style": {
+          "position": "static",
+          "top": "auto",
+          "left": "auto",
+          "display": "block",
+          "flexWrap": "nowrap",
+          "gap": "normal",
+          "alignItems": "flex-start",
+          "justifyContent": "normal",
+          "backgroundColor": "rgb(68, 68, 68)",
+          "color": "rgb(255, 255, 255)",
+          "fontSize": "14px",
+          "padding": "8px 12px",
+          "borderRadius": "4px",
+          "border": "0px none rgb(255, 255, 255)",
+          "zIndex": "auto",
+          "cursor": "pointer"
+        },
+        "text": "✕ Limpiar"
+      }
+    ]
+  }
+}
