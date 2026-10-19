@@ -14,7 +14,7 @@ import type { Card } from '../entities/Card';
 import type { RecordShotPayload, FinishedSessionData, GameMode } from '../types/api';
 import { COLOR, FONT_SIZE } from '../ui/theme';
 import { formatClock } from '../utils/format';
-import { createButton } from '../ui/widgets/Button';
+import { SessionSummaryOverlay } from '../ui/SessionSummaryOverlay';
 
 /**
  * Infraestructura genérica compartida por ambos juegos: ciclo de vida de la
@@ -255,238 +255,24 @@ export abstract class BaseGameScene extends Phaser.Scene {
   }
 
   private showSessionSummary(): void {
-    if (this.lastFinishedSessionData) {
-      this.showSessionSummaryBackend(this.lastFinishedSessionData);
-    } else {
-      this.showSessionSummaryLocal();
-    }
+    const statsText = this.lastFinishedSessionData
+      ? this.backendSummaryText(this.lastFinishedSessionData)
+      : this.localSummaryText();
+
+    new SessionSummaryOverlay(this, statsText, () => this.scene.restart()).show();
   }
 
-  private showSessionSummaryLocal(): void {
-    this.input.setDefaultCursor('default');
-
-    const finalScore = this.scoreManager.getScore();
-
-    const overlay = this.add.rectangle(
-      this.cameras.main.centerX,
-      this.cameras.main.centerY,
-      this.cameras.main.width,
-      this.cameras.main.height,
-      0x000000,
-      0.8
-    );
-    overlay.setDepth(3000);
-
-    const summaryText = this.add.text(
-      this.cameras.main.centerX,
-      this.cameras.main.centerY - 150,
-      '¡SESIÓN COMPLETADA!',
-      {
-        fontSize: FONT_SIZE.hero,
-        color: COLOR.yellow,
-        fontStyle: 'bold',
-        stroke: COLOR.black,
-        strokeThickness: 8
-      }
-    );
-    summaryText.setOrigin(0.5);
-    summaryText.setDepth(3001);
-
-    const statsText = this.add.text(
-      this.cameras.main.centerX,
-      this.cameras.main.centerY,
-      `Puntuación Final: ${finalScore}`,
-      {
-        fontSize: FONT_SIZE.title,
-        color: COLOR.white,
-        fontStyle: 'bold',
-        align: 'center',
-        lineSpacing: 10
-      }
-    );
-    statsText.setOrigin(0.5);
-    statsText.setDepth(3001);
-
-    const restartText = this.add.text(
-      this.cameras.main.centerX,
-      this.cameras.main.centerY + 150,
-      'Haz clic para nueva sesión',
-      {
-        fontSize: FONT_SIZE.xxl,
-        color: COLOR.green,
-        fontStyle: 'italic'
-      }
-    );
-    restartText.setOrigin(0.5);
-    restartText.setDepth(3001);
-
-    this.tweens.add({
-      targets: restartText,
-      alpha: 0.3,
-      duration: 800,
-      ease: 'Sine.easeInOut',
-      yoyo: true,
-      repeat: -1
-    });
-
-    this.input.once('pointerdown', () => {
-      this.showRestartConfirmation(overlay, summaryText, statsText, restartText);
-    });
-  }
-
-  private showSessionSummaryBackend(session: FinishedSessionData): void {
-    this.input.setDefaultCursor('default');
-
-    const overlay = this.add.rectangle(
-      this.cameras.main.centerX,
-      this.cameras.main.centerY,
-      this.cameras.main.width,
-      this.cameras.main.height,
-      0x000000,
-      0.8
-    );
-    overlay.setDepth(3000);
-
-    const title = this.add.text(
-      this.cameras.main.centerX,
-      this.cameras.main.centerY - 150,
-      '¡SESIÓN COMPLETADA!',
-      {
-        fontSize: FONT_SIZE.hero,
-        color: COLOR.yellow,
-        fontStyle: 'bold',
-        stroke: COLOR.black,
-        strokeThickness: 8
-      }
-    );
-    title.setOrigin(0.5);
-    title.setDepth(3001);
-
-    const stats = this.add.text(
-      this.cameras.main.centerX,
-      this.cameras.main.centerY,
+  private backendSummaryText(session: FinishedSessionData): string {
+    return (
       `Puntuación Final: ${session.final_score}\n` +
       `Disparos Totales: ${session.total_shots}\n` +
       `Aciertos: ${session.correct_shots} | Errores: ${session.wrong_shots}\n` +
       `Precisión: ${session.accuracy}%\n` +
-      `Tiempo Jugado: ${formatClock(session.duration_seconds)}`,
-      {
-        fontSize: FONT_SIZE.title,
-        color: COLOR.white,
-        fontStyle: 'bold',
-        align: 'center',
-        lineSpacing: 10
-      }
+      `Tiempo Jugado: ${formatClock(session.duration_seconds)}`
     );
-    stats.setOrigin(0.5);
-    stats.setDepth(3001);
-
-    const restartText = this.add.text(
-      this.cameras.main.centerX,
-      this.cameras.main.centerY + 150,
-      'Haz clic para nueva sesión',
-      {
-        fontSize: FONT_SIZE.xxl,
-        color: COLOR.green,
-        fontStyle: 'italic'
-      }
-    );
-    restartText.setOrigin(0.5);
-    restartText.setDepth(3001);
-
-    this.tweens.add({
-      targets: restartText,
-      alpha: 0.3,
-      duration: 800,
-      ease: 'Sine.easeInOut',
-      yoyo: true,
-      repeat: -1
-    });
-
-    this.input.once('pointerdown', () => {
-      this.showRestartConfirmation(overlay, title, stats, restartText);
-    });
   }
 
-  private showRestartConfirmation(
-    _overlay: Phaser.GameObjects.Rectangle,
-    summaryText: Phaser.GameObjects.Text,
-    statsText: Phaser.GameObjects.Text,
-    restartText: Phaser.GameObjects.Text
-  ): void {
-    summaryText.destroy();
-    statsText.destroy();
-    restartText.destroy();
-
-    const confirmText = this.add.text(
-      this.cameras.main.centerX,
-      this.cameras.main.centerY - 60,
-      '¿Seguro que deseas iniciar\nuna nueva sesión?',
-      {
-        fontSize: FONT_SIZE.display,
-        color: COLOR.yellow,
-        fontStyle: 'bold',
-        stroke: COLOR.black,
-        strokeThickness: 6,
-        align: 'center'
-      }
-    );
-    confirmText.setOrigin(0.5);
-    confirmText.setDepth(3001);
-
-    const yesButton = createButton(this, {
-      x: this.cameras.main.centerX - 100,
-      y: this.cameras.main.centerY + 80,
-      text: 'SÍ',
-      fontSize: FONT_SIZE.h1,
-      color: COLOR.green,
-      bg: '#004400',
-      padding: { x: 30, y: 15 },
-      extra: { fontStyle: 'bold', stroke: COLOR.black, strokeThickness: 4 },
-      hover: { scale: 1.1 },
-      depth: 3001,
-    });
-
-    const noButton = createButton(this, {
-      x: this.cameras.main.centerX + 100,
-      y: this.cameras.main.centerY + 80,
-      text: 'NO',
-      fontSize: FONT_SIZE.h1,
-      color: COLOR.red,
-      bg: '#440000',
-      padding: { x: 30, y: 15 },
-      extra: { fontStyle: 'bold', stroke: COLOR.black, strokeThickness: 4 },
-      hover: { scale: 1.1 },
-      depth: 3001,
-    });
-
-    // Evita que un doble clic dispare dos veces scene.restart() (crearía
-    // dos sesiones en el backend, dejando una huérfana sin disparos).
-    let choiceMade = false;
-
-    yesButton.on('pointerdown', () => {
-      if (choiceMade) return;
-      choiceMade = true;
-      yesButton.disableInteractive();
-      noButton.disableInteractive();
-
-      this.scene.restart();
-    });
-
-    noButton.on('pointerdown', () => {
-      if (choiceMade) return;
-      choiceMade = true;
-      yesButton.disableInteractive();
-      noButton.disableInteractive();
-
-      confirmText.destroy();
-      yesButton.destroy();
-      noButton.destroy();
-
-      // En el fotograma siguiente: showSessionSummary() registra un
-      // input.once('pointerdown') y, si se registrara ahora, este mismo clic lo
-      // dispararía y volvería a mostrar la confirmación.
-      this.time.delayedCall(0, () => this.showSessionSummary());
-    });
+  private localSummaryText(): string {
+    return `Puntuación Final: ${this.scoreManager.getScore()}`;
   }
 }

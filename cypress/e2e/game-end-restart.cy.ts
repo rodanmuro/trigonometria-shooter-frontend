@@ -114,15 +114,21 @@ GAMES.forEach((game) => {
           expectSceneText(game.key, 'Score: 0');
         });
 
-        // DEFECTO ACTUAL (bitácora 014, defecto 5; se corrige en la etapa 6 del refactor): cada vez que se
-        // vuelve al resumen con NO se crea otra capa oscura sin retirar la anterior.
-        it('(comportamiento actual) cada NO añade otra capa oscura sin retirar la anterior', () => {
+        // Defecto 5 de la bitácora 014 (corregido en la etapa 6 del refactor, bitácora 024): antes cada NO creaba
+        // otra capa oscura sin retirar la anterior.
+        it('alternar varias veces entre resumen y confirmación mantiene una sola capa oscura', () => {
           cy.window().should((win) => expect(overlayCount(win, game.key)).to.equal(1));
 
           clickSceneText(game.key, 'NO');
           expectSceneText(game.key, 'Haz clic para nueva sesión');
+          cy.window().should((win) => expect(overlayCount(win, game.key)).to.equal(1));
 
-          cy.window().should((win) => expect(overlayCount(win, game.key)).to.equal(2));
+          clickGame(300, 400);
+          expectSceneText(game.key, CONFIRM);
+          clickSceneText(game.key, 'NO');
+          expectSceneText(game.key, 'Haz clic para nueva sesión');
+
+          cy.window().should((win) => expect(overlayCount(win, game.key)).to.equal(1));
         });
 
         it('SÍ reinicia: crea una sesión nueva del mismo juego y el puntaje vuelve a 0', () => {
