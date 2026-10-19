@@ -8,12 +8,13 @@ import type {
   PaginationInfoExtended,
 } from '../types/api';
 import { COLOR, FONT_SIZE } from '../ui/theme';
-import { formatDate, formatTime } from '../utils/format';
 import { createButton } from '../ui/widgets/Button';
 import { createPagination } from '../ui/widgets/Pagination';
 import { createModalFrame } from '../ui/widgets/Modal';
 import { LIST_BUTTON_STYLE } from '../ui/buttonStyles';
 import { FilterBar } from '../ui/html/FilterBar';
+import { createDataTable } from '../ui/widgets/DataTable';
+import { SESSION_COLUMNS, SESSION_ROW_BACKGROUND, SESSION_TABLE } from '../ui/sessionTable';
 
 /**
  * Reporte propio del estudiante: su historial de sesiones (ambos juegos) con
@@ -109,17 +110,17 @@ export default class StatsScene extends Phaser.Scene {
     }
 
     const tableY = 230;
-    const headers = ['#', 'Fecha', 'Hora', 'Puntuación', 'Modo', 'Disparos', 'Aciertos', 'Precisión'];
-    const positions = [centerX - 500, centerX - 430, centerX - 300, centerX - 150, centerX - 20, centerX + 100, centerX + 220, centerX + 360];
 
-    this.createTableHeader(centerX, tableY, headers, positions);
-
-    const maxVisible = 7;
-    const itemHeight = 50;
-
-    this.sessions.slice(0, maxVisible).forEach((session, index) => {
-      const rowY = tableY + 45 + index * itemHeight;
-      this.createSessionRow(session, rowY, positions, itemHeight);
+    createDataTable(this, {
+      centerX,
+      columns: SESSION_COLUMNS,
+      rows: this.sessions,
+      maxRows: SESSION_TABLE.maxRows,
+      header: { y: tableY, width: SESSION_TABLE.headerWidth, fontSize: FONT_SIZE.xsPlus },
+      firstRowY: tableY + 45,
+      rowSpacing: SESSION_TABLE.rowSpacing,
+      rowBackground: SESSION_ROW_BACKGROUND,
+      onCreate: (obj) => obj.setData('clearable', true),
     });
 
     this.createPagination(centerX, height - 60, this.pagination, (newPage) => {
@@ -195,56 +196,7 @@ export default class StatsScene extends Phaser.Scene {
       .mount(this.getCanvasTopOffset() + 135);
   }
 
-  private createSessionRow(
-    session: MySessionListItem,
-    rowY: number,
-    positions: number[],
-    itemHeight: number
-  ): void {
-    const centerX = this.cameras.main.width / 2;
-
-    this.add
-      .rectangle(centerX, rowY, 1050, itemHeight - 5, 0x16213e, 0.8)
-      .setStrokeStyle(1, 0x0f3460)
-      .setData('clearable', true);
-
-    this.createText(positions[0], rowY, session.row_number.toString(), COLOR.grayMid);
-
-    this.createText(positions[1], rowY, formatDate(session.started_at), COLOR.white);
-    this.createText(positions[2], rowY, formatTime(session.started_at), COLOR.grayLight);
-    this.createText(positions[3], rowY, session.final_score.toString(), COLOR.mint);
-
-    const modeLabel = session.game_mode === 'triangle_application' ? 'Triángulo' : 'Razones';
-    this.createText(positions[4], rowY, modeLabel, COLOR.white);
-
-    this.createText(positions[5], rowY, session.total_shots.toString(), COLOR.white);
-    this.createText(positions[6], rowY, session.correct_shots.toString(), COLOR.teal);
-
-    const accuracyColor = session.accuracy >= 80 ? COLOR.green : session.accuracy >= 60 ? COLOR.amber : COLOR.salmon;
-    this.createText(positions[7], rowY, `${session.accuracy}%`, accuracyColor);
-  }
-
   // --- Métodos auxiliares ---
-
-  private createTableHeader(centerX: number, y: number, headers: string[], positions: number[]): void {
-    this.add
-      .rectangle(centerX, y, 1100, 35, 0x1a1a2e, 1)
-      .setStrokeStyle(2, 0xffff00)
-      .setDepth(100)
-      .setData('clearable', true);
-
-    headers.forEach((header, index) => {
-      this.add
-        .text(positions[index], y, header, {
-          fontSize: FONT_SIZE.xsPlus,
-          color: COLOR.yellow,
-          fontStyle: 'bold',
-        })
-        .setOrigin(0, 0.5)
-        .setDepth(101)
-        .setData('clearable', true);
-    });
-  }
 
   private createPagination(
     centerX: number,
@@ -275,13 +227,6 @@ export default class StatsScene extends Phaser.Scene {
     bgColor: string = COLOR.grayDark
   ): Phaser.GameObjects.Text {
     return createButton(this, { ...LIST_BUTTON_STYLE, bg: bgColor, x, y, text, onClick }).setData('clearable', true);
-  }
-
-  private createText(x: number, y: number, text: string, color: string): void {
-    this.add
-      .text(x, y, text, { fontSize: FONT_SIZE.xs, color })
-      .setOrigin(0, 0.5)
-      .setData('clearable', true);
   }
 
   private clearScene(): void {
