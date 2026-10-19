@@ -39,3 +39,85 @@ body {
 canvas {
   cursor: default;
 }
+
+/* ---------------------------------------------------------------------
+   Barras de filtros HTML (Estadísticas y panel de administración).
+   Las crea ui/html/FilterBar.ts; `top` lo fija en línea, porque depende de
+   dónde quede el canvas en la página.
+   --------------------------------------------------------------------- */
+.filter-bar {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  background: rgba(26, 26, 46, 0.95);
+  border-radius: 8px;
+  border: 1px solid #333;
+}
+
+.filter-bar--stats,
+.filter-bar--sessions {
+  gap: 10px;
+  padding: 10px 20px;
+  z-index: 1000;
+}
+
+.filter-bar--users {
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  padding: 8px 15px;
+  z-index: 10;
+  max-width: 95%;
+}
+
+.filter-label {
+  color: #aaa;
+  font-size: 14px;
+}
+
+.filter-bar--users .filter-label {
+  font-size: 13px;
+}
+
+.filter-input,
+.filter-select {
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid #444;
+  background: #1a1a2e;
+  color: #fff;
+  font-size: 14px;
+}
+
+.filter-select {
+  cursor: pointer;
+}
+
+.filter-input--short {
+  width: 80px;
+}
+
+.filter-input--date {
+  width: 130px;
+}
+
+.filter-input--wide {
+  width: 150px;
+}
+
+.filter-btn {
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: none;
+  background: #444;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.filter-btn--primary {
+  padding: 8px 16px;
+  background: #0066cc;
+}

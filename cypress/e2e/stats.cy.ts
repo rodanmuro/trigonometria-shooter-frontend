@@ -341,18 +341,19 @@ describe('Estadísticas del estudiante', () => {
       cy.window().should((win) => expect(statsFilterBars(win)).to.have.length(1));
     });
 
-    // DEFECTO LATENTE (bitácora 014, defecto 3): `shutdown()` es un método de la clase, pero Phaser no lo
-    // invoca por nombre y la escena nunca lo registra en SHUTDOWN. Hoy las salidas de la interfaz
-    // (volver, cerrar) retiran la barra a mano, por lo que no se ve; si la escena se cierra de otra forma
-    // (aquí, scene.start desde fuera) la barra queda en la página. Al corregirlo esperar 0 barras.
-    it('(comportamiento actual) si la escena se cierra sin pasar por sus botones, la barra queda en el DOM', () => {
+    // Defecto 3 de la bitácora 014 (corregido en la etapa 4 del refactor, bitácora 022): `shutdown()` nunca
+    // se registraba en SHUTDOWN, así que la barra solo se retiraba con los botones de la escena. Aquí la
+    // escena se cierra por su propio plugin (scene.start desde la escena, como hace el código de los
+    // botones), sin pasar por ellos. Ojo: `game.scene.start('MenuScene')` NO sirve para esto: arranca el
+    // menú pero deja la escena de estadísticas en marcha.
+    it('si la escena se cierra sin pasar por sus botones, la barra de filtros se retira', () => {
       openStats({ sessions: mySessions(3) });
       bar().should('exist');
 
-      cy.window().then((win) => (win as any).game.scene.start('MenuScene'));
+      cy.window().then((win) => getScene(win, 'StatsScene').scene.start('MenuScene'));
 
       waitForScene('MenuScene');
-      cy.window().should((win) => expect(statsFilterBars(win)).to.have.length(1));
+      cy.window().should((win) => expect(statsFilterBars(win)).to.have.length(0));
     });
   });
 

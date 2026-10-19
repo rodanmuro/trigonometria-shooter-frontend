@@ -1,4 +1,4 @@
-import { stubAdminApi, stubEmptyHistory } from '../support/api';
+import { stubAdminApi } from '../support/api';
 import { adminUser, adminUsers } from '../support/fixtures';
 import {
   adminFilterBar,
@@ -426,17 +426,17 @@ describe('Panel de administración: lista de usuarios', () => {
       cy.get('#admin-filters').should('not.exist');
     });
 
-    // DEFECTO LATENTE (bitácora 014, defecto 3): igual que en StatsScene, `shutdown()` nunca se registra
-    // en SHUTDOWN. Solo se ve si la escena se cierra sin pasar por sus botones. Al corregirlo, esperar 0.
-    it('(comportamiento actual) si la escena se cierra sin pasar por sus botones, la barra queda en el DOM', () => {
+    // Defecto 3 de la bitácora 014 (corregido en la etapa 4 del refactor, bitácora 022): igual que en
+    // StatsScene, la barra solo se retiraba con los botones de la escena. Se cierra por el plugin de la
+    // propia escena (ver el comentario de stats.cy.ts).
+    it('si la escena se cierra sin pasar por sus botones, la barra de filtros se retira', () => {
       openAdmin({ users: adminUsers(3) });
-      stubEmptyHistory();
       bar().should('exist');
 
-      cy.window().then((win) => (win as any).game.scene.start('MenuScene'));
+      cy.window().then((win) => getScene(win, 'AdminScene').scene.start('MenuScene'));
 
       waitForScene('MenuScene');
-      cy.get('#admin-filters').should('exist');
+      cy.get('#admin-filters').should('not.exist');
     });
   });
 
