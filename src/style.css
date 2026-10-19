@@ -13,31 +13,85 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+html,
+body {
+  height: 100%;
+  /* Mismo color que el fondo del juego: las franjas del lienzo reducido no se ven como un marco */
+  background-color: #1a1a2e;
+}
+
 body {
   margin: 0;
-  display: flex;
-  justify-content: center;
-  min-width: 320px;
-  min-height: 100vh;
-  /* Antes usaba place-items:center (también centrado vertical): si el
-     contenido (canvas de 800px + padding) es más alto que la ventana, el
-     centrado recorta partes de arriba y de abajo sin scroll para alcanzarlas
-     (ej. el botón "Siguiente" de la paginación, al fondo de la vista de
-     sesiones). Solo centramos horizontalmente y dejamos que la página
-     scrollee verticalmente cuando haga falta. */
-  overflow-y: auto;
+  overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
+/* El Scale Manager de Phaser ajusta y centra el lienzo dentro de #app */
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
 }
 
-/* Asegurar que el cursor sea visible en el canvas */
+/* Cursor visible en el canvas; el toque no desplaza ni hace zoom */
 canvas {
   cursor: default;
+  touch-action: none;
+  display: block;
+}
+
+/* Los campos de los filtros sí deben poder seleccionarse y escribirse */
+input,
+select {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+/* Aviso de rotación: solo en pantallas táctiles en vertical */
+#rotate-notice {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #1a1a2e;
+  color: #ffff00;
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+#rotate-notice p {
+  margin: 0;
+}
+
+#rotate-notice .rotate-icon {
+  font-size: 64px;
+  animation: rotate-hint 2s ease-in-out infinite;
+}
+
+#rotate-notice .rotate-hint {
+  color: #aaaaaa;
+  font-size: 16px;
+  font-weight: normal;
+}
+
+@keyframes rotate-hint {
+  0%, 20% { transform: rotate(0deg); }
+  60%, 100% { transform: rotate(-90deg); }
+}
+
+@media (orientation: portrait) and (pointer: coarse) {
+  #rotate-notice {
+    display: flex;
+  }
 }
 
 /* ---------------------------------------------------------------------

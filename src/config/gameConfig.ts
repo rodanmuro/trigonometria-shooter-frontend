@@ -13,6 +13,14 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
   width: 1200,
   height: 800,
   parent: 'app',
+  // El lienzo se ajusta (sin deformar) al espacio disponible y nunca se agranda por encima de su tamaño base.
+  scale: {
+    mode: Phaser.Scale.FIT,
+    autoCenter: Phaser.Scale.CENTER_BOTH,
+    width: 1200,
+    height: 800,
+    max: { width: 1200, height: 800 },
+  },
   backgroundColor: COLOR.navy,
   physics: {
     default: 'arcade',

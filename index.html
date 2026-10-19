@@ -3,12 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>Trigonometria Shooter</title>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
   </head>
   <body>
     <div id="app"></div>
+    <!-- Aviso en celular vertical: el juego es horizontal (se muestra solo por CSS) -->
+    <div id="rotate-notice" role="alert">
+      <div class="rotate-icon">📱</div>
+      <p>Gira el celular para jugar</p>
+      <p class="rotate-hint">Trigonometría Shooter se juega en horizontal</p>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
