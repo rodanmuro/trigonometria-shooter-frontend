@@ -14,6 +14,7 @@ import type { Card } from '../entities/Card';
 import type { RecordShotPayload, FinishedSessionData, GameMode } from '../types/api';
 import { COLOR, FONT_SIZE } from '../ui/theme';
 import { formatClock } from '../utils/format';
+import { createButton } from '../ui/widgets/Button';
 
 /**
  * Infraestructura genérica compartida por ambos juegos: ciclo de vida de la
@@ -433,54 +434,30 @@ export abstract class BaseGameScene extends Phaser.Scene {
     confirmText.setOrigin(0.5);
     confirmText.setDepth(3001);
 
-    const yesButton = this.add.text(
-      this.cameras.main.centerX - 100,
-      this.cameras.main.centerY + 80,
-      'SÍ',
-      {
-        fontSize: FONT_SIZE.h1,
-        color: COLOR.green,
-        fontStyle: 'bold',
-        stroke: COLOR.black,
-        strokeThickness: 4,
-        backgroundColor: '#004400',
-        padding: { x: 30, y: 15 }
-      }
-    );
-    yesButton.setOrigin(0.5);
-    yesButton.setDepth(3001);
-    yesButton.setInteractive({ useHandCursor: true });
-
-    const noButton = this.add.text(
-      this.cameras.main.centerX + 100,
-      this.cameras.main.centerY + 80,
-      'NO',
-      {
-        fontSize: FONT_SIZE.h1,
-        color: COLOR.red,
-        fontStyle: 'bold',
-        stroke: COLOR.black,
-        strokeThickness: 4,
-        backgroundColor: '#440000',
-        padding: { x: 30, y: 15 }
-      }
-    );
-    noButton.setOrigin(0.5);
-    noButton.setDepth(3001);
-    noButton.setInteractive({ useHandCursor: true });
-
-    yesButton.on('pointerover', () => {
-      yesButton.setScale(1.1);
-    });
-    yesButton.on('pointerout', () => {
-      yesButton.setScale(1);
+    const yesButton = createButton(this, {
+      x: this.cameras.main.centerX - 100,
+      y: this.cameras.main.centerY + 80,
+      text: 'SÍ',
+      fontSize: FONT_SIZE.h1,
+      color: COLOR.green,
+      bg: '#004400',
+      padding: { x: 30, y: 15 },
+      extra: { fontStyle: 'bold', stroke: COLOR.black, strokeThickness: 4 },
+      hover: { scale: 1.1 },
+      depth: 3001,
     });
 
-    noButton.on('pointerover', () => {
-      noButton.setScale(1.1);
-    });
-    noButton.on('pointerout', () => {
-      noButton.setScale(1);
+    const noButton = createButton(this, {
+      x: this.cameras.main.centerX + 100,
+      y: this.cameras.main.centerY + 80,
+      text: 'NO',
+      fontSize: FONT_SIZE.h1,
+      color: COLOR.red,
+      bg: '#440000',
+      padding: { x: 30, y: 15 },
+      extra: { fontStyle: 'bold', stroke: COLOR.black, strokeThickness: 4 },
+      hover: { scale: 1.1 },
+      depth: 3001,
     });
 
     // Evita que un doble clic dispare dos veces scene.restart() (crearía
