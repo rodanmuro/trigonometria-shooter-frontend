@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import type { Question } from '../types';
 import { UI_CONFIG } from '../utils/constants';
 import { COLOR } from '../ui/theme';
+import { getLayout } from '../ui/layout';
 
 /**
  * Componente UI para mostrar la razón trigonométrica a identificar
@@ -25,6 +26,13 @@ export class QuestionDisplay extends Phaser.GameObjects.Container {
       align: 'center'
     });
     this.questionText.setOrigin(0.5);
+
+    // Se agranda en pantallas pequeñas (1 en escritorio). Se escalan los hijos y no el contenedor,
+    // porque la animación de entrada anima la escala del contenedor de 0 a 1.
+    const hudScale = getLayout(scene).hudScale;
+    this.background.setScale(hudScale);
+    this.questionText.setScale(hudScale);
+    this.questionText.setResolution(hudScale);
 
     this.add([this.background, this.questionText]);
 

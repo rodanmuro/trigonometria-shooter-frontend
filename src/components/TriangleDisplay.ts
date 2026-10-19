@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import type { TriangleQuestion, TriangleSide } from '../types';
 import { COLOR, FONT_SIZE } from '../ui/theme';
+import { getLayout } from '../ui/layout';
 
 interface Point {
   x: number;
@@ -14,6 +15,11 @@ const VERTEX_A: Point = { x: -70, y: -110 };
 const VERTEX_B: Point = { x: 110, y: 90 };
 
 const RIGHT_ANGLE_MARK_SIZE = 16;
+
+// Posición vertical natural del triángulo y cuánto baja por cada unidad de escala extra del HUD,
+// para que el vértice A (arriba) no pise la pregunta ni el temporizador, que también crecen
+const BASE_Y = 300;
+const Y_SHIFT_PER_HUD_SCALE = 150;
 
 const NORMAL_VERTEX_COLOR = COLOR.white;
 const ANGLE_VALUE_COLOR = COLOR.green;
@@ -38,9 +44,12 @@ export class TriangleDisplay extends Phaser.GameObjects.Container {
   private vertexTextC: Phaser.GameObjects.Text;
   private angleValueText: Phaser.GameObjects.Text;
   private currentQuestion: TriangleQuestion | null = null;
+  private baseScale: number;
 
   constructor(scene: Phaser.Scene) {
-    super(scene, scene.cameras.main.centerX, 300);
+    const hudScale = getLayout(scene).hudScale;
+    super(scene, scene.cameras.main.centerX, BASE_Y + Y_SHIFT_PER_HUD_SCALE * (hudScale - 1));
+    this.baseScale = hudScale;
 
     this.triangleGraphics = scene.add.graphics();
     this.drawTriangleShape();
@@ -75,6 +84,11 @@ export class TriangleDisplay extends Phaser.GameObjects.Container {
       this.vertexTextC,
       this.angleValueText,
     ]);
+
+    // Se agranda en pantallas pequeñas (1 en escritorio); los textos se dibujan a mayor resolución
+    this.setScale(this.baseScale);
+    [...Object.values(this.sideTexts), this.vertexTextA, this.vertexTextB, this.vertexTextC, this.angleValueText]
+      .forEach((text) => text.setResolution(this.baseScale));
 
     scene.add.existing(this);
     this.setDepth(80);
@@ -146,13 +160,13 @@ export class TriangleDisplay extends Phaser.GameObjects.Container {
   }
 
   private animateIn(): void {
-    this.setScale(0.85);
+    this.setScale(this.baseScale * 0.85);
     this.setAlpha(0.3);
 
     this.scene.tweens.add({
       targets: this,
-      scaleX: 1,
-      scaleY: 1,
+      scaleX: this.baseScale,
+      scaleY: this.baseScale,
       alpha: 1,
       duration: 300,
       ease: 'Back.easeOut',

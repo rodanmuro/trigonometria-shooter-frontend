@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { UI_CONFIG } from '../utils/constants';
 import { COLOR, FONT_SIZE } from '../ui/theme';
+import { getLayout } from '../ui/layout';
 
 /**
  * Componente UI para mostrar la puntuación del jugador
@@ -21,6 +22,11 @@ export class ScoreDisplay extends Phaser.GameObjects.Container {
       strokeThickness: 4
     });
     this.scoreText.setOrigin(0, 0.5);
+
+    // Se agranda en pantallas pequeñas (1 en escritorio); los efectos animan solo el texto
+    const hudScale = getLayout(scene).hudScale;
+    this.setScale(hudScale);
+    this.scoreText.setResolution(hudScale);
 
     // Añadir al contenedor
     this.add(this.scoreText);

@@ -175,3 +175,24 @@ select {
   padding: 8px 16px;
   background: #0066cc;
 }
+
+/* Botón de pantalla completa: esquina superior izquierda, discreto */
+#fullscreen-btn {
+  position: fixed;
+  top: 6px;
+  left: 6px;
+  z-index: 1000;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  color: #ffffff;
+  font-size: 22px;
+  line-height: 1;
+}
+
+#fullscreen-btn[hidden] {
+  display: none;
+}

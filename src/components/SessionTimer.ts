@@ -1,6 +1,8 @@
 import Phaser from 'phaser';
 import { COLOR, FONT_SIZE } from '../ui/theme';
 import { formatClock } from '../utils/format';
+import { getLayout } from '../ui/layout';
+import { UI_CONFIG } from '../utils/constants';
 
 /**
  * Temporizador de sesión que cuenta regresivamente desde 5 minutos
@@ -14,10 +16,12 @@ export class SessionTimer {
     this.scene = scene;
     this.remainingTime = totalTime;
 
-    // Crear texto del temporizador (debajo de la pregunta)
+    // Crear texto del temporizador (debajo de la pregunta). La caja de la pregunta crece con
+    // hudScale, así que el temporizador baja con ella (90 px a escala 1, como antes)
+    const hudScale = getLayout(scene).hudScale;
     this.timerText = this.scene.add.text(
       this.scene.cameras.main.centerX,
-      90,
+      UI_CONFIG.QUESTION_DISPLAY_Y + 40 * hudScale,
       this.formatTime(this.remainingTime),
       {
         fontSize: FONT_SIZE.xxl,
@@ -29,6 +33,10 @@ export class SessionTimer {
     );
     this.timerText.setOrigin(0.5);
     this.timerText.setDepth(1000);
+
+    // Se agranda en pantallas pequeñas (1 en escritorio)
+    this.timerText.setScale(hudScale);
+    this.timerText.setResolution(hudScale);
   }
 
   /**

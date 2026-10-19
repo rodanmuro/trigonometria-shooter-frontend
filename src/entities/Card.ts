@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { CARD_CONFIG } from '../utils/constants';
 import { CardExplosion } from '../effects/CardExplosion';
 import { COLOR, FONT_SIZE } from '../ui/theme';
+import { getLayout } from '../ui/layout';
 
 /**
  * Tarjeta con una etiqueta (fórmula CO/H, CA/H, CO/CA, o nombre de función
@@ -47,6 +48,12 @@ export class Card extends Phaser.GameObjects.Container {
     scene.add.existing(this);
 
     this.setDepth(50);
+
+    // En pantallas pequeñas la tarjeta se agranda para seguir siendo tocable (1 en escritorio).
+    // El texto se dibuja a mayor resolución para que no se vea borroso al agrandarse.
+    const cardScale = getLayout(scene).cardScale;
+    this.setScale(cardScale);
+    this.labelText.setResolution(cardScale);
 
     this.setSize(CARD_CONFIG.CARD_WIDTH, CARD_CONFIG.CARD_HEIGHT);
     this.setInteractive(

@@ -1,9 +1,11 @@
 import Phaser from 'phaser';
+import { getLayout } from '../ui/layout';
 
 export class Crosshair extends Phaser.GameObjects.Container {
   private outerCircle: Phaser.GameObjects.Graphics;
   private innerCircle: Phaser.GameObjects.Graphics;
   private centerDot: Phaser.GameObjects.Graphics;
+  private baseScale = 1;
 
   constructor(scene: Phaser.Scene) {
     super(scene, 0, 0);
@@ -31,6 +33,10 @@ export class Crosshair extends Phaser.GameObjects.Container {
 
     // Establecer profundidad alta para que esté siempre visible
     this.setDepth(1000);
+
+    // Visible aunque el canvas se muestre reducido (1 en escritorio)
+    this.baseScale = getLayout(scene).crosshairScale;
+    this.setScale(this.baseScale);
   }
 
   /**
@@ -46,8 +52,8 @@ export class Crosshair extends Phaser.GameObjects.Container {
   public pulse(): void {
     this.scene.tweens.add({
       targets: this,
-      scaleX: 1.2,
-      scaleY: 1.2,
+      scaleX: this.baseScale * 1.2,
+      scaleY: this.baseScale * 1.2,
       duration: 100,
       yoyo: true,
       ease: 'Sine.easeInOut'

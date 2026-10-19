@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { Card } from '../entities/Card';
 import { CARD_CONFIG } from '../utils/constants';
+import { getLayout } from '../ui/layout';
 import { getOtherLabels, randomInt } from '../utils/mathHelpers';
 
 type SpawnEdge = 'top' | 'bottom' | 'left' | 'right';
@@ -35,6 +36,14 @@ export class CardSpawner {
   }
 
   /**
+   * Máximo de tarjetas simultáneas: el de CARD_CONFIG, reducido en pantallas pequeñas para que el
+   * campo no se sature (20 en escritorio)
+   */
+  public getMaxCards(): number {
+    return Math.round(CARD_CONFIG.MAX_CARDS_ON_SCREEN * getLayout(this.scene).maxCardsFactor);
+  }
+
+  /**
    * Inicia el spawn de tarjetas para una nueva pregunta
    * @param pool Las etiquetas posibles (siempre 3, una de ellas correcta)
    * @param correctLabel Cuál de las etiquetas del pool es la correcta
@@ -65,7 +74,7 @@ export class CardSpawner {
   private spawnCard(): void {
     if (!this.correctLabel) return;
 
-    if (this.cards.length >= CARD_CONFIG.MAX_CARDS_ON_SCREEN) {
+    if (this.cards.length >= this.getMaxCards()) {
       return;
     }
 
@@ -162,9 +171,13 @@ export class CardSpawner {
   }
 
   public checkHit(x: number, y: number): Card | null {
+    // Margen extra de impacto cuando el canvas se muestra reducido (0 en escritorio)
+    const slop = getLayout(this.scene).hitSlop;
+
     for (const card of this.cards) {
-      const halfWidth = CARD_CONFIG.CARD_WIDTH / 2;
-      const halfHeight = CARD_CONFIG.CARD_HEIGHT / 2;
+      // Área de impacto según el tamaño (escalado) de la tarjeta
+      const halfWidth = (CARD_CONFIG.CARD_WIDTH * card.scaleX) / 2 + slop;
+      const halfHeight = (CARD_CONFIG.CARD_HEIGHT * card.scaleY) / 2 + slop;
 
       const left = card.x - halfWidth;
       const right = card.x + halfWidth;
@@ -183,6 +196,10 @@ export class CardSpawner {
     if (index > -1) {
       this.cards.splice(index, 1);
     }
+  }
+
+  public getCards(): Card[] {
+    return this.cards;
   }
 
   public clearAllCards(): void {

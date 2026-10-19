@@ -10,6 +10,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck:tests": "tsc -p tests/tsconfig.json",
+    "dev:lan": "vite --host --no-open",
     "dev:e2e": "VITE_API_URL=/api VITE_GOOGLE_CLIENT_ID=test-client-id.apps.googleusercontent.com vite --host 127.0.0.1 --port 5174 --strictPort --no-open",
     "cypress:run": "env -u ELECTRON_RUN_AS_NODE cypress run",
     "cypress:open": "env -u ELECTRON_RUN_AS_NODE cypress open",
