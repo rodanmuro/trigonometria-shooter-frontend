@@ -12,6 +12,7 @@ import { sessionApiService } from '../services/sessionApiService';
 import { shotApiService } from '../services/shotApiService';
 import type { Card } from '../entities/Card';
 import type { RecordShotPayload, FinishedSessionData, GameMode } from '../types/api';
+import { COLOR, FONT_SIZE } from '../ui/theme';
 
 /**
  * Infraestructura genérica compartida por ambos juegos: ciclo de vida de la
@@ -172,10 +173,10 @@ export abstract class BaseGameScene extends Phaser.Scene {
       this.cameras.main.centerY - 100,
       `¡NIVEL ${newLevel}!\nCartas más rápidas`,
       {
-        fontSize: '56px',
-        color: '#00ff00',
+        fontSize: FONT_SIZE.splash,
+        color: COLOR.green,
         fontStyle: 'bold',
-        stroke: '#000000',
+        stroke: COLOR.black,
         strokeThickness: 8,
         align: 'center'
       }
@@ -279,10 +280,10 @@ export abstract class BaseGameScene extends Phaser.Scene {
       this.cameras.main.centerY - 150,
       '¡SESIÓN COMPLETADA!',
       {
-        fontSize: '64px',
-        color: '#ffff00',
+        fontSize: FONT_SIZE.hero,
+        color: COLOR.yellow,
         fontStyle: 'bold',
-        stroke: '#000000',
+        stroke: COLOR.black,
         strokeThickness: 8
       }
     );
@@ -294,8 +295,8 @@ export abstract class BaseGameScene extends Phaser.Scene {
       this.cameras.main.centerY,
       `Puntuación Final: ${finalScore}`,
       {
-        fontSize: '32px',
-        color: '#ffffff',
+        fontSize: FONT_SIZE.title,
+        color: COLOR.white,
         fontStyle: 'bold',
         align: 'center',
         lineSpacing: 10
@@ -309,8 +310,8 @@ export abstract class BaseGameScene extends Phaser.Scene {
       this.cameras.main.centerY + 150,
       'Haz clic para nueva sesión',
       {
-        fontSize: '28px',
-        color: '#00ff00',
+        fontSize: FONT_SIZE.xxl,
+        color: COLOR.green,
         fontStyle: 'italic'
       }
     );
@@ -349,10 +350,10 @@ export abstract class BaseGameScene extends Phaser.Scene {
       this.cameras.main.centerY - 150,
       '¡SESIÓN COMPLETADA!',
       {
-        fontSize: '64px',
-        color: '#ffff00',
+        fontSize: FONT_SIZE.hero,
+        color: COLOR.yellow,
         fontStyle: 'bold',
-        stroke: '#000000',
+        stroke: COLOR.black,
         strokeThickness: 8
       }
     );
@@ -371,8 +372,8 @@ export abstract class BaseGameScene extends Phaser.Scene {
       `Precisión: ${session.accuracy}%\n` +
       `Tiempo Jugado: ${minutes}:${seconds.toString().padStart(2, '0')}`,
       {
-        fontSize: '32px',
-        color: '#ffffff',
+        fontSize: FONT_SIZE.title,
+        color: COLOR.white,
         fontStyle: 'bold',
         align: 'center',
         lineSpacing: 10
@@ -386,8 +387,8 @@ export abstract class BaseGameScene extends Phaser.Scene {
       this.cameras.main.centerY + 150,
       'Haz clic para nueva sesión',
       {
-        fontSize: '28px',
-        color: '#00ff00',
+        fontSize: FONT_SIZE.xxl,
+        color: COLOR.green,
         fontStyle: 'italic'
       }
     );
@@ -423,10 +424,10 @@ export abstract class BaseGameScene extends Phaser.Scene {
       this.cameras.main.centerY - 60,
       '¿Seguro que deseas iniciar\nuna nueva sesión?',
       {
-        fontSize: '48px',
-        color: '#ffff00',
+        fontSize: FONT_SIZE.display,
+        color: COLOR.yellow,
         fontStyle: 'bold',
-        stroke: '#000000',
+        stroke: COLOR.black,
         strokeThickness: 6,
         align: 'center'
       }
@@ -439,10 +440,10 @@ export abstract class BaseGameScene extends Phaser.Scene {
       this.cameras.main.centerY + 80,
       'SÍ',
       {
-        fontSize: '42px',
-        color: '#00ff00',
+        fontSize: FONT_SIZE.h1,
+        color: COLOR.green,
         fontStyle: 'bold',
-        stroke: '#000000',
+        stroke: COLOR.black,
         strokeThickness: 4,
         backgroundColor: '#004400',
         padding: { x: 30, y: 15 }
@@ -457,10 +458,10 @@ export abstract class BaseGameScene extends Phaser.Scene {
       this.cameras.main.centerY + 80,
       'NO',
       {
-        fontSize: '42px',
-        color: '#ff0000',
+        fontSize: FONT_SIZE.h1,
+        color: COLOR.red,
         fontStyle: 'bold',
-        stroke: '#000000',
+        stroke: COLOR.black,
         strokeThickness: 4,
         backgroundColor: '#440000',
         padding: { x: 30, y: 15 }

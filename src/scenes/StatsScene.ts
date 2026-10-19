@@ -7,6 +7,7 @@ import type {
   MySessionsFilterParams,
   PaginationInfoExtended,
 } from '../types/api';
+import { COLOR, FONT_SIZE } from '../ui/theme';
 
 /**
  * Reporte propio del estudiante: su historial de sesiones (ambos juegos) con
@@ -35,8 +36,8 @@ export default class StatsScene extends Phaser.Scene {
 
     this.add
       .text(centerX, 25, 'MIS ESTADÍSTICAS', {
-        fontSize: '28px',
-        color: '#ffff00',
+        fontSize: FONT_SIZE.xxl,
+        color: COLOR.yellow,
         fontStyle: 'bold',
       })
       .setOrigin(0.5);
@@ -74,8 +75,8 @@ export default class StatsScene extends Phaser.Scene {
     const user = AuthManager.getInstance().getUser();
     this.add
       .text(centerX, 60, user?.name || user?.email || '', {
-        fontSize: '16px',
-        color: '#aaaaaa',
+        fontSize: FONT_SIZE.sm,
+        color: COLOR.grayLight,
       })
       .setOrigin(0.5)
       .setData('clearable', true);
@@ -92,8 +93,8 @@ export default class StatsScene extends Phaser.Scene {
       const total = this.pagination.total;
       this.add
         .text(100, 200, `Mostrando ${from}-${to} de ${total} sesiones`, {
-          fontSize: '16px',
-          color: '#aaaaaa',
+          fontSize: FONT_SIZE.sm,
+          color: COLOR.grayLight,
         })
         .setData('clearable', true);
     }
@@ -133,8 +134,8 @@ export default class StatsScene extends Phaser.Scene {
 
     this.add
       .text(centerX, y, summaryText, {
-        fontSize: '14px',
-        color: '#4ecdc4',
+        fontSize: FONT_SIZE.xs,
+        color: COLOR.teal,
         align: 'center',
         lineSpacing: 8,
       })
@@ -251,20 +252,20 @@ export default class StatsScene extends Phaser.Scene {
       .setStrokeStyle(1, 0x0f3460)
       .setData('clearable', true);
 
-    this.createText(positions[0], rowY, session.row_number.toString(), '#888888');
+    this.createText(positions[0], rowY, session.row_number.toString(), COLOR.grayMid);
 
     const date = new Date(session.started_at);
-    this.createText(positions[1], rowY, date.toLocaleDateString(), '#ffffff');
-    this.createText(positions[2], rowY, date.toLocaleTimeString().substring(0, 5), '#aaaaaa');
-    this.createText(positions[3], rowY, session.final_score.toString(), '#95e1d3');
+    this.createText(positions[1], rowY, date.toLocaleDateString(), COLOR.white);
+    this.createText(positions[2], rowY, date.toLocaleTimeString().substring(0, 5), COLOR.grayLight);
+    this.createText(positions[3], rowY, session.final_score.toString(), COLOR.mint);
 
     const modeLabel = session.game_mode === 'triangle_application' ? 'Triángulo' : 'Razones';
-    this.createText(positions[4], rowY, modeLabel, '#ffffff');
+    this.createText(positions[4], rowY, modeLabel, COLOR.white);
 
-    this.createText(positions[5], rowY, session.total_shots.toString(), '#ffffff');
-    this.createText(positions[6], rowY, session.correct_shots.toString(), '#4ecdc4');
+    this.createText(positions[5], rowY, session.total_shots.toString(), COLOR.white);
+    this.createText(positions[6], rowY, session.correct_shots.toString(), COLOR.teal);
 
-    const accuracyColor = session.accuracy >= 80 ? '#00ff00' : session.accuracy >= 60 ? '#ffaa00' : '#ff6666';
+    const accuracyColor = session.accuracy >= 80 ? COLOR.green : session.accuracy >= 60 ? COLOR.amber : COLOR.salmon;
     this.createText(positions[7], rowY, `${session.accuracy}%`, accuracyColor);
   }
 
@@ -280,8 +281,8 @@ export default class StatsScene extends Phaser.Scene {
     headers.forEach((header, index) => {
       this.add
         .text(positions[index], y, header, {
-          fontSize: '15px',
-          color: '#ffff00',
+          fontSize: FONT_SIZE.xsPlus,
+          color: COLOR.yellow,
           fontStyle: 'bold',
         })
         .setOrigin(0, 0.5)
@@ -302,19 +303,19 @@ export default class StatsScene extends Phaser.Scene {
     const lastPage = pagination.last_page;
 
     if (currentPage > 1) {
-      this.createButton(centerX - 150, y, '← Anterior', () => onChange(currentPage - 1), '#333333');
+      this.createButton(centerX - 150, y, '← Anterior', () => onChange(currentPage - 1), COLOR.grayDark);
     }
 
     this.add
       .text(centerX, y, `Página ${currentPage} de ${lastPage}`, {
-        fontSize: '18px',
-        color: '#ffffff',
+        fontSize: FONT_SIZE.md,
+        color: COLOR.white,
       })
       .setOrigin(0.5)
       .setData('clearable', true);
 
     if (currentPage < lastPage) {
-      this.createButton(centerX + 150, y, 'Siguiente →', () => onChange(currentPage + 1), '#333333');
+      this.createButton(centerX + 150, y, 'Siguiente →', () => onChange(currentPage + 1), COLOR.grayDark);
     }
   }
 
@@ -323,12 +324,12 @@ export default class StatsScene extends Phaser.Scene {
     y: number,
     text: string,
     onClick: () => void,
-    bgColor: string = '#333333'
+    bgColor: string = COLOR.grayDark
   ): Phaser.GameObjects.Text {
     const btn = this.add
       .text(x, y, text, {
-        fontSize: '16px',
-        color: '#ffffff',
+        fontSize: FONT_SIZE.sm,
+        color: COLOR.white,
         backgroundColor: bgColor,
         padding: { x: 12, y: 8 },
       })
@@ -345,7 +346,7 @@ export default class StatsScene extends Phaser.Scene {
 
   private createText(x: number, y: number, text: string, color: string): void {
     this.add
-      .text(x, y, text, { fontSize: '14px', color })
+      .text(x, y, text, { fontSize: FONT_SIZE.xs, color })
       .setOrigin(0, 0.5)
       .setData('clearable', true);
   }
@@ -397,8 +398,8 @@ export default class StatsScene extends Phaser.Scene {
 
     this.add
       .text(centerX, centerY - 40, 'ERROR', {
-        fontSize: '28px',
-        color: '#ff0000',
+        fontSize: FONT_SIZE.xxl,
+        color: COLOR.red,
         fontStyle: 'bold',
       })
       .setOrigin(0.5)
@@ -406,8 +407,8 @@ export default class StatsScene extends Phaser.Scene {
 
     this.add
       .text(centerX, centerY + 10, message, {
-        fontSize: '16px',
-        color: '#ffffff',
+        fontSize: FONT_SIZE.sm,
+        color: COLOR.white,
         align: 'center',
         wordWrap: { width: 450 },
       })

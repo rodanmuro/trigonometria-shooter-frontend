@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { UI_CONFIG } from '../utils/constants';
+import { COLOR, FONT_SIZE } from '../ui/theme';
 
 /**
  * Componente UI para mostrar la puntuación del jugador
@@ -14,9 +15,9 @@ export class ScoreDisplay extends Phaser.GameObjects.Container {
     // Texto de la puntuación
     this.scoreText = scene.add.text(0, 0, 'Score: 0', {
       fontSize: UI_CONFIG.SCORE_FONT_SIZE,
-      color: '#ffffff',
+      color: COLOR.white,
       fontStyle: 'bold',
-      stroke: '#000000',
+      stroke: COLOR.black,
       strokeThickness: 4
     });
     this.scoreText.setOrigin(0, 0.5);
@@ -53,7 +54,7 @@ export class ScoreDisplay extends Phaser.GameObjects.Container {
     // Flash verde y escala
     const originalColor = this.scoreText.style.color;
 
-    this.scoreText.setColor('#00ff00');
+    this.scoreText.setColor(COLOR.green);
 
     this.scene.tweens.add({
       targets: this.scoreText,
@@ -68,7 +69,7 @@ export class ScoreDisplay extends Phaser.GameObjects.Container {
     });
 
     // Texto flotante con el puntaje ganado
-    this.showFloatingText(`+${delta}`, '#00ff00');
+    this.showFloatingText(`+${delta}`, COLOR.green);
   }
 
   /**
@@ -79,7 +80,7 @@ export class ScoreDisplay extends Phaser.GameObjects.Container {
     const originalColor = this.scoreText.style.color;
     const originalX = this.scoreText.x;
 
-    this.scoreText.setColor('#ff0000');
+    this.scoreText.setColor(COLOR.red);
 
     this.scene.tweens.add({
       targets: this.scoreText,
@@ -94,7 +95,7 @@ export class ScoreDisplay extends Phaser.GameObjects.Container {
     });
 
     // Texto flotante con el puntaje perdido
-    this.showFloatingText(`${delta}`, '#ff0000');
+    this.showFloatingText(`${delta}`, COLOR.red);
   }
 
   /**
@@ -106,10 +107,10 @@ export class ScoreDisplay extends Phaser.GameObjects.Container {
       this.scoreText.y,
       text,
       {
-        fontSize: '24px',
+        fontSize: FONT_SIZE.xl,
         color: color,
         fontStyle: 'bold',
-        stroke: '#000000',
+        stroke: COLOR.black,
         strokeThickness: 3
       }
     );

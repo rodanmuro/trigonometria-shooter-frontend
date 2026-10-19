@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { AuthManager } from '../managers/AuthManager';
 import type { GoogleCredentialResponse } from '../types/auth';
 import { authApiService } from '../services/authApiService';
+import { COLOR, FONT_SIZE } from '../ui/theme';
 
 /**
  * Escena de login con Google OAuth
@@ -17,17 +18,17 @@ export class LoginScene extends Phaser.Scene {
   create(): void {
     this.authManager = AuthManager.getInstance();
 
-    this.cameras.main.setBackgroundColor('#1a1a2e');
+    this.cameras.main.setBackgroundColor(COLOR.navy);
 
     const title = this.add.text(
       this.cameras.main.centerX,
       150,
       'TRIGONOMETRIA\nSHOOTER',
       {
-        fontSize: '72px',
-        color: '#ffff00',
+        fontSize: FONT_SIZE.logo,
+        color: COLOR.yellow,
         fontStyle: 'bold',
-        stroke: '#000000',
+        stroke: COLOR.black,
         strokeThickness: 8,
         align: 'center'
       }
@@ -39,8 +40,8 @@ export class LoginScene extends Phaser.Scene {
       280,
       'Aprende las razones trigonométricas jugando',
       {
-        fontSize: '28px',
-        color: '#ffffff',
+        fontSize: FONT_SIZE.xxl,
+        color: COLOR.white,
         fontStyle: 'italic'
       }
     );
@@ -51,8 +52,8 @@ export class LoginScene extends Phaser.Scene {
       this.cameras.main.centerY - 50,
       'Inicia sesión con tu cuenta de Google\npara guardar tu progreso',
       {
-        fontSize: '24px',
-        color: '#cccccc',
+        fontSize: FONT_SIZE.xl,
+        color: COLOR.grayPale,
         align: 'center',
         lineSpacing: 10
       }
@@ -66,8 +67,8 @@ export class LoginScene extends Phaser.Scene {
       this.cameras.main.height - 100,
       'Cargando Google Sign-In...',
       {
-        fontSize: '18px',
-        color: '#888888'
+        fontSize: FONT_SIZE.md,
+        color: COLOR.grayMid
       }
     );
     loadingText.setOrigin(0.5);
@@ -83,7 +84,7 @@ export class LoginScene extends Phaser.Scene {
       this.cameras.main.height - 30,
       'Desarrollado con Phaser 3 & TypeScript',
       {
-        fontSize: '16px',
+        fontSize: FONT_SIZE.sm,
         color: '#666666'
       }
     );
@@ -104,14 +105,14 @@ export class LoginScene extends Phaser.Scene {
 
     const iconBg = this.add.circle(-90, 0, 18, 0xffffff);
     const googleIcon = this.add.text(-90, 0, 'G', {
-      fontSize: '28px',
+      fontSize: FONT_SIZE.xxl,
       color: '#4285f4',
       fontStyle: 'bold'
     });
     googleIcon.setOrigin(0.5);
 
     const buttonText = this.add.text(10, 0, 'Sign in with Google', {
-      fontSize: '20px',
+      fontSize: FONT_SIZE.lg,
       color: '#757575',
       fontStyle: 'bold'
     });
@@ -141,13 +142,13 @@ export class LoginScene extends Phaser.Scene {
     if (!clientId) {
       console.error('VITE_GOOGLE_CLIENT_ID no está configurado en .env');
       loadingText.setText('Error: Client ID no configurado');
-      loadingText.setColor('#ff0000');
+      loadingText.setColor(COLOR.red);
       return;
     }
 
     if (typeof window.google === 'undefined') {
       loadingText.setText('Error: Google Identity Services no cargado');
-      loadingText.setColor('#ff0000');
+      loadingText.setColor(COLOR.red);
       return;
     }
 
@@ -184,7 +185,7 @@ export class LoginScene extends Phaser.Scene {
     } catch (error) {
       console.error('Error al inicializar Google Sign-In:', error);
       loadingText.setText('Error al cargar Google Sign-In');
-      loadingText.setColor('#ff0000');
+      loadingText.setColor(COLOR.red);
     }
   }
 
@@ -229,8 +230,8 @@ export class LoginScene extends Phaser.Scene {
         this.cameras.main.centerY + 200,
         'Error al conectar con el servidor.\nIntenta de nuevo.',
         {
-          fontSize: '20px',
-          color: '#ff0000',
+          fontSize: FONT_SIZE.lg,
+          color: COLOR.red,
           align: 'center'
         }
       );
@@ -244,10 +245,10 @@ export class LoginScene extends Phaser.Scene {
       this.cameras.main.centerY,
       `¡Bienvenido, ${userName}!`,
       {
-        fontSize: '48px',
-        color: '#00ff00',
+        fontSize: FONT_SIZE.display,
+        color: COLOR.green,
         fontStyle: 'bold',
-        stroke: '#000000',
+        stroke: COLOR.black,
         strokeThickness: 6
       }
     );

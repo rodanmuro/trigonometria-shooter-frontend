@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { COLOR, FONT_SIZE } from '../ui/theme';
 
 /**
  * Temporizador de sesión que cuenta regresivamente desde 5 minutos
@@ -18,10 +19,10 @@ export class SessionTimer {
       90,
       this.formatTime(this.remainingTime),
       {
-        fontSize: '28px',
-        color: '#ffffff',
+        fontSize: FONT_SIZE.xxl,
+        color: COLOR.white,
         fontStyle: 'bold',
-        stroke: '#000000',
+        stroke: COLOR.black,
         strokeThickness: 3
       }
     );
@@ -39,7 +40,7 @@ export class SessionTimer {
     // Cambiar color según tiempo restante
     if (this.remainingTime <= 60000) {
       // Último minuto: rojo parpadeante
-      this.timerText.setColor('#ff0000');
+      this.timerText.setColor(COLOR.red);
       const pulse = Math.sin(Date.now() / 200) * 0.3 + 0.7;
       this.timerText.setAlpha(pulse);
     } else if (this.remainingTime <= 120000) {
@@ -48,7 +49,7 @@ export class SessionTimer {
       this.timerText.setAlpha(1);
     } else {
       // Tiempo normal: blanco
-      this.timerText.setColor('#ffffff');
+      this.timerText.setColor(COLOR.white);
       this.timerText.setAlpha(1);
     }
   }

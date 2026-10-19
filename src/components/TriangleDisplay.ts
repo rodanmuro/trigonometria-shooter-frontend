@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import type { TriangleQuestion, TriangleSide } from '../types';
+import { COLOR, FONT_SIZE } from '../ui/theme';
 
 interface Point {
   x: number;
@@ -14,8 +15,8 @@ const VERTEX_B: Point = { x: 110, y: 90 };
 
 const RIGHT_ANGLE_MARK_SIZE = 16;
 
-const NORMAL_VERTEX_COLOR = '#ffffff';
-const ANGLE_VALUE_COLOR = '#00ff00';
+const NORMAL_VERTEX_COLOR = COLOR.white;
+const ANGLE_VALUE_COLOR = COLOR.green;
 
 // Posición del texto del valor en grados, hacia el interior del triángulo
 // desde cada vértice (A o B, el que sea el ángulo de referencia).
@@ -56,10 +57,10 @@ export class TriangleDisplay extends Phaser.GameObjects.Container {
     [this.vertexTextA, this.vertexTextB, this.vertexTextC].forEach((text) => text.setOrigin(0.5));
 
     this.angleValueText = scene.add.text(0, 0, '', {
-      fontSize: '20px',
+      fontSize: FONT_SIZE.lg,
       color: ANGLE_VALUE_COLOR,
       fontStyle: 'bold',
-      stroke: '#000000',
+      stroke: COLOR.black,
       strokeThickness: 4,
     });
     this.angleValueText.setOrigin(0.5);
@@ -81,10 +82,10 @@ export class TriangleDisplay extends Phaser.GameObjects.Container {
 
   private vertexStyle() {
     return {
-      fontSize: '26px',
+      fontSize: FONT_SIZE.xlPlus,
       color: NORMAL_VERTEX_COLOR,
       fontStyle: 'bold',
-      stroke: '#000000',
+      stroke: COLOR.black,
       strokeThickness: 4,
     };
   }
@@ -93,10 +94,10 @@ export class TriangleDisplay extends Phaser.GameObjects.Container {
     const midX = (p1.x + p2.x) / 2 + offsetX;
     const midY = (p1.y + p2.y) / 2 + offsetY;
     const text = scene.add.text(midX, midY, '', {
-      fontSize: '24px',
-      color: '#ffff00',
+      fontSize: FONT_SIZE.xl,
+      color: COLOR.yellow,
       fontStyle: 'bold',
-      stroke: '#000000',
+      stroke: COLOR.black,
       strokeThickness: 4,
     });
     text.setOrigin(0.5);

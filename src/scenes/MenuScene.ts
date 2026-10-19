@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { AuthManager } from '../managers/AuthManager';
+import { COLOR, FONT_SIZE } from '../ui/theme';
 
 /**
  * Menú de selección de juego, entre el login y las escenas de juego
@@ -10,17 +11,17 @@ export class MenuScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.cameras.main.setBackgroundColor('#1a1a2e');
+    this.cameras.main.setBackgroundColor(COLOR.navy);
 
     const title = this.add.text(
       this.cameras.main.centerX,
       140,
       'TRIGONOMETRIA SHOOTER',
       {
-        fontSize: '52px',
-        color: '#ffff00',
+        fontSize: FONT_SIZE.displayPlus,
+        color: COLOR.yellow,
         fontStyle: 'bold',
-        stroke: '#000000',
+        stroke: COLOR.black,
         strokeThickness: 8,
         align: 'center'
       }
@@ -32,8 +33,8 @@ export class MenuScene extends Phaser.Scene {
       220,
       'Elegí un juego',
       {
-        fontSize: '28px',
-        color: '#ffffff',
+        fontSize: FONT_SIZE.xxl,
+        color: COLOR.white,
         fontStyle: 'italic'
       }
     );
@@ -96,15 +97,15 @@ export class MenuScene extends Phaser.Scene {
     background.setStrokeStyle(3, strokeColor);
 
     const titleText = this.add.text(0, -18, title, {
-      fontSize: '28px',
-      color: '#ffffff',
+      fontSize: FONT_SIZE.xxl,
+      color: COLOR.white,
       fontStyle: 'bold'
     });
     titleText.setOrigin(0.5);
 
     const descriptionText = this.add.text(0, 20, description, {
-      fontSize: '16px',
-      color: '#cccccc'
+      fontSize: FONT_SIZE.sm,
+      color: COLOR.grayPale
     });
     descriptionText.setOrigin(0.5);
 

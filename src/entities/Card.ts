@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { CARD_CONFIG } from '../utils/constants';
 import { CardExplosion } from '../effects/CardExplosion';
+import { COLOR, FONT_SIZE } from '../ui/theme';
 
 /**
  * Tarjeta con una etiqueta (fórmula CO/H, CA/H, CO/CA, o nombre de función
@@ -34,8 +35,8 @@ export class Card extends Phaser.GameObjects.Container {
     this.drawCardBackground();
 
     this.labelText = scene.add.text(0, 0, value.toUpperCase(), {
-      fontSize: '30px',
-      color: '#ffffff',
+      fontSize: FONT_SIZE.xxlPlus,
+      color: COLOR.white,
       fontStyle: 'bold',
       align: 'center'
     });
