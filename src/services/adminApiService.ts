@@ -7,29 +7,11 @@ import type {
   AdminUsersFilterParams,
   AdminSessionsFilterParams,
 } from '../types/api';
+import { downloadBlob, filenameFromContentDisposition } from '../utils/download';
 
 /**
  * Servicio para llamadas a la API de administración (solo accesible con profile=admin)
  */
-function downloadBlob(blob: Blob, contentDisposition: string | undefined, fallbackName: string): void {
-  let filename = fallbackName;
-  if (contentDisposition) {
-    const match = contentDisposition.match(/filename="(.+)"/);
-    if (match) {
-      filename = match[1];
-    }
-  }
-
-  const url = window.URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  window.URL.revokeObjectURL(url);
-  document.body.removeChild(a);
-}
-
 export const adminApiService = {
   async getGroups(): Promise<AdminGroupsResponse> {
     const response = await apiClient.get<AdminGroupsResponse>('/admin/groups');
@@ -67,7 +49,7 @@ export const adminApiService = {
       params,
       responseType: 'blob',
     });
-    downloadBlob(response.data, response.headers['content-disposition'], 'usuarios.csv');
+    downloadBlob(response.data, filenameFromContentDisposition(response.headers['content-disposition'], 'usuarios.csv'));
   },
 
   async exportUserSessions(userId: number, params: AdminSessionsFilterParams = {}): Promise<void> {
@@ -75,6 +57,6 @@ export const adminApiService = {
       params,
       responseType: 'blob',
     });
-    downloadBlob(response.data, response.headers['content-disposition'], 'sesiones.csv');
+    downloadBlob(response.data, filenameFromContentDisposition(response.headers['content-disposition'], 'sesiones.csv'));
   },
 };

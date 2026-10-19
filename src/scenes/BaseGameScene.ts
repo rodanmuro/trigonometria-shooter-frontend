@@ -13,6 +13,7 @@ import { shotApiService } from '../services/shotApiService';
 import type { Card } from '../entities/Card';
 import type { RecordShotPayload, FinishedSessionData, GameMode } from '../types/api';
 import { COLOR, FONT_SIZE } from '../ui/theme';
+import { formatClock } from '../utils/format';
 
 /**
  * Infraestructura genérica compartida por ambos juegos: ciclo de vida de la
@@ -360,9 +361,6 @@ export abstract class BaseGameScene extends Phaser.Scene {
     title.setOrigin(0.5);
     title.setDepth(3001);
 
-    const minutes = Math.floor(session.duration_seconds / 60);
-    const seconds = session.duration_seconds % 60;
-
     const stats = this.add.text(
       this.cameras.main.centerX,
       this.cameras.main.centerY,
@@ -370,7 +368,7 @@ export abstract class BaseGameScene extends Phaser.Scene {
       `Disparos Totales: ${session.total_shots}\n` +
       `Aciertos: ${session.correct_shots} | Errores: ${session.wrong_shots}\n` +
       `Precisión: ${session.accuracy}%\n` +
-      `Tiempo Jugado: ${minutes}:${seconds.toString().padStart(2, '0')}`,
+      `Tiempo Jugado: ${formatClock(session.duration_seconds)}`,
       {
         fontSize: FONT_SIZE.title,
         color: COLOR.white,

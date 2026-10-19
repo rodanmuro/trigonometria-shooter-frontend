@@ -104,12 +104,13 @@ describe('Panel de administración: lista de usuarios', () => {
       expectSceneText('AdminScene', '2100');
     });
 
-    // DEFECTO ACTUAL (bitácora 014, defecto 4): toLocaleDateString() sin idioma; el formato depende del
-    // navegador. Al corregirlo (es-ES fijo) esta expresión pasa a /^\d{2}\/\d{2}\/\d{4}$/.
-    it('(comportamiento actual) la última sesión se muestra como fecha con el idioma del navegador', () => {
-      openAdmin({ users: adminUsers(1) });
+    // Defecto 4 de la bitácora 014 (corregido en la etapa 2 del refactor, bitácora 020): antes usaba
+    // toLocaleDateString() sin idioma (3/20/2026 en inglés).
+    it('la última sesión se muestra como dd/mm/aaaa, sin depender del idioma del navegador', () => {
+      openAdmin({ users: [adminUser({ last_played_at: '2026-03-05T14:07:00' })] });
 
-      expectSceneText('AdminScene', /^\d{1,4}[/.-]\d{1,2}[/.-]\d{1,4}$/);
+      expectSceneText('AdminScene', /^\d{2}\/\d{2}\/\d{4}$/);
+      expectSceneText('AdminScene', '05/03/2026');
     });
 
     it('trunca emails de más de 28 caracteres y nombres de más de 18', () => {

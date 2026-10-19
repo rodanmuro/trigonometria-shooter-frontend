@@ -8,6 +8,7 @@ import type {
   PaginationInfoExtended,
 } from '../types/api';
 import { COLOR, FONT_SIZE } from '../ui/theme';
+import { formatDate, formatTime } from '../utils/format';
 
 /**
  * Reporte propio del estudiante: su historial de sesiones (ambos juegos) con
@@ -254,9 +255,8 @@ export default class StatsScene extends Phaser.Scene {
 
     this.createText(positions[0], rowY, session.row_number.toString(), COLOR.grayMid);
 
-    const date = new Date(session.started_at);
-    this.createText(positions[1], rowY, date.toLocaleDateString(), COLOR.white);
-    this.createText(positions[2], rowY, date.toLocaleTimeString().substring(0, 5), COLOR.grayLight);
+    this.createText(positions[1], rowY, formatDate(session.started_at), COLOR.white);
+    this.createText(positions[2], rowY, formatTime(session.started_at), COLOR.grayLight);
     this.createText(positions[3], rowY, session.final_score.toString(), COLOR.mint);
 
     const modeLabel = session.game_mode === 'triangle_application' ? 'Triángulo' : 'Razones';

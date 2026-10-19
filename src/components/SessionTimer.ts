@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { COLOR, FONT_SIZE } from '../ui/theme';
+import { formatClock } from '../utils/format';
 
 /**
  * Temporizador de sesión que cuenta regresivamente desde 5 minutos
@@ -58,10 +59,7 @@ export class SessionTimer {
    * Formatea el tiempo en MM:SS
    */
   private formatTime(ms: number): string {
-    const totalSeconds = Math.ceil(ms / 1000);
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    return formatClock(Math.ceil(ms / 1000));
   }
 
   /**

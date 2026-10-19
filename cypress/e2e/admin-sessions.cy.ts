@@ -108,8 +108,8 @@ describe('Panel de administración: sesiones de un usuario', () => {
         ],
       });
 
-      expectSceneText('AdminScene', /^\d{1,4}[/.-]\d{1,2}[/.-]\d{1,4}$/);
-      expectSceneText('AdminScene', /^\d{1,2}:\d{2}/);
+      expectSceneText('AdminScene', /^\d{2}\/\d{2}\/\d{4}$/);
+      expectSceneText('AdminScene', /^\d{2}:\d{2}$/);
       expectSceneText('AdminScene', '1850');
       expectSceneText('AdminScene', 'Razones');
       expectSceneText('AdminScene', '50');

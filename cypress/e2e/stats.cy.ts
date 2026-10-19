@@ -127,15 +127,13 @@ describe('Estadísticas del estudiante', () => {
       expectTextColor('StatsScene', '59.9%', '#ff6666');
     });
 
-    // DEFECTO ACTUAL (bitácora 014, defecto 4): fecha y hora salen de toLocaleDateString() y
-    // toLocaleTimeString() sin idioma, así que el formato depende del navegador (3/20/2026 en inglés,
-    // 20/3/2026 en español). Por eso aquí solo se comprueba la forma general; al corregirlo
-    // (utils/format.ts, es-ES fijo) estas expresiones pasan a dd/mm/aaaa y hh:mm.
-    it('(comportamiento actual) la fecha y la hora dependen del idioma del navegador', () => {
-      openStats({ sessions: mySessions(2) });
+    // Defecto 4 de la bitácora 014 (corregido en la etapa 2 del refactor, bitácora 020): antes el formato
+    // dependía del idioma del navegador (3/20/2026 en inglés) y la hora podía salir recortada.
+    it('la fecha se muestra como dd/mm/aaaa y la hora como hh:mm, sin depender del idioma del navegador', () => {
+      openStats({ sessions: [mySession({ started_at: '2026-03-05T14:07:00' })] });
 
-      expectSceneText('StatsScene', /^\d{1,4}[/.-]\d{1,2}[/.-]\d{1,4}$/);
-      expectSceneText('StatsScene', /^\d{1,2}:\d{2}/);
+      expectSceneText('StatsScene', '05/03/2026');
+      expectSceneText('StatsScene', '14:07');
     });
 
     it('muestra el contador "Mostrando a-b de N sesiones"', () => {
