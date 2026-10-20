@@ -81,6 +81,24 @@ describe('apiService (cliente axios)', () => {
       expect(console.error).toHaveBeenCalledWith('El servidor no respondió. Verifica tu conexión.');
     });
 
+    it('el mensaje del error pasa a ser el del servidor (error: message)', async () => {
+      mockApi({ status: 422, data: { error: 'CSV inválido', message: 'Falta la columna group' } });
+      const caught = vi.fn();
+
+      await apiClient.get('/x').catch(caught);
+
+      expect(caught.mock.calls[0][0].message).toBe('CSV inválido: Falta la columna group');
+    });
+
+    it('sin mensaje en el cuerpo conserva el de axios', async () => {
+      mockApi({ status: 500, data: {} });
+      const caught = vi.fn();
+
+      await apiClient.get('/x').catch(caught);
+
+      expect(caught.mock.calls[0][0].message).toBe('Request failed');
+    });
+
     it('el error original llega intacto a quien llama', async () => {
       mockApi({ status: 500, data: { message: 'boom' } });
       const caught = vi.fn();

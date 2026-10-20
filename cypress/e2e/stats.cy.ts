@@ -304,7 +304,7 @@ describe('Estadísticas del estudiante', () => {
       openStats({ sessions: [], listFails: true });
 
       expectSceneText('StatsScene', 'ERROR');
-      expectSceneText('StatsScene', 'Request failed with status code 500');
+      expectSceneText('StatsScene', 'Error simulado');
 
       clickSceneText('StatsScene', 'Cerrar');
 
@@ -379,7 +379,7 @@ describe('Estadísticas del estudiante', () => {
 
     it('error al cargar', () => {
       openStats({ sessions: [], listFails: true });
-      expectSceneText('StatsScene', 'Request failed with status code 500');
+      expectSceneText('StatsScene', 'Error simulado');
 
       expectSnapshot('stats-error-carga', { scene: 'StatsScene' });
     });

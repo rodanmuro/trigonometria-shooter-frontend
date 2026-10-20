@@ -393,14 +393,12 @@ describe('Panel de administración: lista de usuarios', () => {
   });
 
   describe('errores', () => {
-    // A diferencia de multiplicación (fetch), el servicio usa axios: el mensaje que se muestra es el de
-    // axios ("Request failed with status code N"), no el `error` que envía el servidor.
-    it('si los usuarios no cargan muestra el mensaje de axios y "Cerrar" vuelve al menú', () => {
+    it('si los usuarios no cargan muestra el mensaje del servidor y "Cerrar" vuelve al menú', () => {
       openAdmin({ users: [], usersFail: { statusCode: 403, body: { error: 'Acceso denegado' } } });
 
       expectSceneText('AdminScene', 'ERROR');
-      expectSceneText('AdminScene', 'Request failed with status code 403');
-      expectNoSceneText('AdminScene', 'Acceso denegado');
+      expectSceneText('AdminScene', 'Acceso denegado');
+      expectNoSceneText('AdminScene', 'Request failed with status code 403');
 
       clickSceneText('AdminScene', 'Cerrar');
 
@@ -478,7 +476,7 @@ describe('Panel de administración: lista de usuarios', () => {
 
     it('error', () => {
       openAdmin({ users: [], usersFail: { statusCode: 403, body: { error: 'Acceso denegado' } } });
-      expectSceneText('AdminScene', 'Request failed with status code 403');
+      expectSceneText('AdminScene', 'Acceso denegado');
 
       expectSnapshot('admin-error', { scene: 'AdminScene' });
     });

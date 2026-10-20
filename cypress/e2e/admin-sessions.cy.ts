@@ -93,7 +93,7 @@ describe('Panel de administración: sesiones de un usuario', () => {
 
       clickAdminUserRow(0);
 
-      expectSceneText('AdminScene', 'Request failed with status code 500');
+      expectSceneText('AdminScene', 'No se pudieron leer las sesiones');
       clickSceneText('AdminScene', 'Cerrar');
       waitForScene('MenuScene');
     });

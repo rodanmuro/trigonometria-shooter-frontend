@@ -3,6 +3,6 @@
   {"type":"Text","x":600,"y":360,"depth":0,"alpha":1,"visible":true,"interactive":false,"text":"ERROR","origin":[0.5,0.5],"fontSize":"28px","color":"#ff0000","fontStyle":"bold"},
   {"type":"Rectangle","x":600,"y":400,"depth":0,"alpha":1,"visible":true,"interactive":false,"width":1200,"height":800,"fillColor":986910,"fillAlpha":1},
   {"type":"Rectangle","x":600,"y":400,"depth":0,"alpha":1,"visible":true,"interactive":false,"width":500,"height":200,"fillColor":0,"fillAlpha":0.95,"stroke":{"color":16711680,"width":3}},
-  {"type":"Text","x":600,"y":410,"depth":0,"alpha":1,"visible":true,"interactive":false,"text":"Request failed with status code 500","origin":[0.5,0.5],"fontSize":"16px","color":"#ffffff"},
+  {"type":"Text","x":600,"y":410,"depth":0,"alpha":1,"visible":true,"interactive":false,"text":"Error simulado","origin":[0.5,0.5],"fontSize":"16px","color":"#ffffff"},
   {"type":"Text","x":560,"y":470,"depth":0,"alpha":1,"visible":true,"interactive":true,"text":"Cerrar","origin":[0,0.5],"fontSize":"16px","color":"#ffffff","backgroundColor":"#333333"}
 ]

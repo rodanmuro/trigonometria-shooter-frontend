@@ -1,5 +1,6 @@
 import axios, { AxiosError } from 'axios';
 import { API_CONFIG } from '../config/api';
+import { serverErrorMessageFrom } from '../utils/serverError';
 
 /**
  * Cliente HTTP base configurado con Axios
@@ -37,7 +38,7 @@ apiClient.interceptors.response.use(
     console.log(`[API Response] ${response.status} ${response.config.url}`);
     return response;
   },
-  (error: AxiosError) => {
+  async (error: AxiosError) => {
     if (error.response) {
       console.error(`[API Error ${error.response.status}]`, error.response.data);
 
@@ -63,6 +64,11 @@ apiClient.interceptors.response.use(
     } else {
       console.error('[API Setup Error]', error.message);
     }
+
+    // Que quien capture el error vea el mensaje del servidor y no el genérico de axios
+    // ("Request failed with status code N")
+    const serverMessage = await serverErrorMessageFrom(error.response?.data);
+    if (serverMessage) error.message = serverMessage;
 
     return Promise.reject(error);
   }

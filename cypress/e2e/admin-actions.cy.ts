@@ -80,9 +80,7 @@ describe('Panel de administración: CSV y exportación', () => {
       cy.wrap(alerts).should('deep.equal', ['Carga completada:\n- Creados: 3\n- Actualizados: 0\n- Errores: 0\n\n']);
     });
 
-    // Con axios el mensaje del aviso es el de la excepción ("Request failed with status code N"), no el
-    // `error`/`message` que envía el servidor (multiplicación, con fetch, sí los mostraba).
-    it('si el servidor lo rechaza, avisa con el mensaje de axios y no recarga la lista', () => {
+    it('si el servidor lo rechaza, avisa con su mensaje (error: message) y no recarga la lista', () => {
       const alerts: string[] = [];
       cy.on('window:alert', (message) => alerts.push(message));
       openAdmin();
@@ -95,7 +93,7 @@ describe('Panel de administración: CSV y exportación', () => {
       clickSceneText('AdminScene', '📄 Cargar CSV');
 
       cy.wait('@uploadCsv');
-      cy.wrap(alerts).should('deep.equal', ['Error: Request failed with status code 422']);
+      cy.wrap(alerts).should('deep.equal', ['Error: CSV inválido: Falta la columna group']);
       cy.get('@getUsers.all').should('have.length', 1);
     });
   });
@@ -138,7 +136,22 @@ describe('Panel de administración: CSV y exportación', () => {
       clickSceneText('AdminScene', '📥 Exportar');
 
       cy.wait('@exportUsers');
+      // Sin mensaje en el cuerpo queda el genérico de axios
       cy.wrap(alerts).should('deep.equal', ['Error al exportar: Request failed with status code 500']);
+    });
+
+    it('si falla con un mensaje del servidor (llega como Blob), el alert lo muestra', () => {
+      const alerts: string[] = [];
+      cy.on('window:alert', (message) => alerts.push(message));
+      openAdmin();
+      cy.intercept({ method: 'GET', pathname: '/api/admin/export/users' }, {
+        statusCode: 500, body: { success: false, error: 'No se pudo generar el archivo' },
+      }).as('exportUsers');
+
+      clickSceneText('AdminScene', '📥 Exportar');
+
+      cy.wait('@exportUsers');
+      cy.wrap(alerts).should('deep.equal', ['Error al exportar: No se pudo generar el archivo']);
     });
   });
 });
