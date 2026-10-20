@@ -10,6 +10,7 @@ const CONTENT_DEPTH = 3001;
  * Pantalla de fin de sesión: resumen de estadísticas → (clic) → confirmación
  * "¿Seguro que deseas iniciar una nueva sesión?" → SÍ reinicia / NO vuelve al resumen.
  * La capa oscura se crea una sola vez, aunque se alterne entre resumen y confirmación.
+ * Si se da `onMenu`, el resumen ofrece además un botón para volver al menú principal (cambiar de juego).
  */
 export class SessionSummaryOverlay {
   private backdrop: Phaser.GameObjects.Rectangle | null = null;
@@ -17,15 +18,19 @@ export class SessionSummaryOverlay {
   private scene: Phaser.Scene;
   private statsText: string;
   private onRestart: () => void;
+  private onMenu: (() => void) | undefined;
+  private removeRestartListener: (() => void) | null = null;
 
   /**
    * @param statsText líneas de estadísticas ya formateadas
    * @param onRestart se invoca al confirmar con SÍ
+   * @param onMenu se invoca al pulsar "Menú principal" (sin confirmación: la sesión ya terminó)
    */
-  constructor(scene: Phaser.Scene, statsText: string, onRestart: () => void) {
+  constructor(scene: Phaser.Scene, statsText: string, onRestart: () => void, onMenu?: () => void) {
     this.scene = scene;
     this.statsText = statsText;
     this.onRestart = onRestart;
+    this.onMenu = onMenu;
   }
 
   show(): void {
@@ -106,8 +111,32 @@ export class SessionSummaryOverlay {
 
     this.current = [title, stats, restartText];
 
-    // Reiniciar al hacer clic (con confirmación)
-    scene.input.once('pointerdown', () => this.showConfirmation());
+    // Reiniciar al hacer clic en cualquier parte (con confirmación)
+    const onPointerDown = (): void => this.showConfirmation();
+    scene.input.once('pointerdown', onPointerDown);
+    this.removeRestartListener = () => scene.input.off('pointerdown', onPointerDown);
+
+    if (this.onMenu) {
+      const onMenu = this.onMenu;
+      const menuButton = createButton(scene, {
+        x: centerX,
+        y: restartText.y + 70 + 40 * u,
+        text: '☰ Menú principal',
+        fontSize: FONT_SIZE.xl,
+        bg: '#333333',
+        padding: { x: 24, y: 10 },
+        scale: bodyScale,
+        hover: { bg: '#555555' },
+        depth: CONTENT_DEPTH,
+        // El manejador del botón corre antes que el del clic "en cualquier parte": se retira éste
+        // para que el mismo toque no abra la confirmación de reinicio
+        onClick: () => {
+          this.removeRestartListener?.();
+          onMenu();
+        },
+      });
+      this.current.push(menuButton);
+    }
   }
 
   private showConfirmation(): void {

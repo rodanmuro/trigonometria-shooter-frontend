@@ -259,7 +259,12 @@ export abstract class BaseGameScene extends Phaser.Scene {
       ? this.backendSummaryText(this.lastFinishedSessionData)
       : this.localSummaryText();
 
-    new SessionSummaryOverlay(this, statsText, () => this.scene.restart()).show();
+    new SessionSummaryOverlay(
+      this,
+      statsText,
+      () => this.scene.restart(),
+      () => this.scene.start('MenuScene')
+    ).show();
   }
 
   private backendSummaryText(session: FinishedSessionData): string {

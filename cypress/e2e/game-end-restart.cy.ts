@@ -14,6 +14,7 @@ import {
   shootCard,
   startGame,
   visitApp,
+  waitForScene,
 } from '../support/gameDriver';
 
 const CONFIRM = '¿Seguro que deseas iniciar\nuna nueva sesión?';
@@ -54,6 +55,32 @@ GAMES.forEach((game) => {
         expectSceneText(game.key, 'Precisión: 67.57%');
         expectSceneText(game.key, 'Tiempo Jugado: 5:00');
         expectSceneText(game.key, 'Haz clic para nueva sesión');
+      });
+
+      it('ofrece volver al menú principal, sin pasar por la confirmación, para cambiar de juego', () => {
+        endSessionNow();
+        cy.wait('@finishSession');
+        expectSceneText(game.key, '☰ Menú principal');
+
+        clickSceneText(game.key, '☰ Menú principal');
+
+        waitForScene('MenuScene');
+        expectNoSceneText('MenuScene', CONFIRM);
+        // Desde el menú se puede elegir el otro juego
+        const other = GAMES.find((g) => g.key !== game.key)!;
+        clickSceneText('MenuScene', other.menuLabel);
+        waitForScene(other.key);
+        cy.get('@createSession.all').should('have.length', 2);
+      });
+
+      it('"Menú principal" no abre la confirmación de reinicio y un clic fuera del botón sí', () => {
+        endSessionNow();
+        cy.wait('@finishSession');
+
+        clickGame(300, 400);
+
+        expectSceneText(game.key, CONFIRM);
+        expectNoSceneText(game.key, '☰ Menú principal');
       });
 
       it('finaliza la sesión una sola vez', () => {
