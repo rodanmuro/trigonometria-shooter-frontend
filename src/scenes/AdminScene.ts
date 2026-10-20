@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { adminApiService } from '../services/adminApiService';
 import type { AdminUserListItem } from '../types/api';
 import { COLOR, FONT_SIZE } from '../ui/theme';
+import { getLayout } from '../ui/layout';
 import { createButton } from '../ui/widgets/Button';
 import { createModalFrame } from '../ui/widgets/Modal';
 import { LIST_BUTTON_STYLE } from '../ui/buttonStyles';
@@ -56,7 +57,39 @@ export default class AdminScene extends Phaser.Scene implements AdminHost {
       })
       .setOrigin(0.5);
 
+    // El panel (tablas anchas y filtros) no es usable con el canvas tan reducido: solo escritorio
+    if (getLayout(this).compact) {
+      this.showDesktopOnlyNotice();
+      return;
+    }
+
     this.initializeData();
+  }
+
+  /** Aviso en celular: el panel de administración solo está disponible en computador. */
+  private showDesktopOnlyNotice(): void {
+    const { centerX, centerY } = this.cameras.main;
+
+    this.add
+      .text(centerX, centerY - 60, 'El panel de administración\nestá disponible solo en computador.', {
+        fontSize: FONT_SIZE.xl,
+        color: COLOR.white,
+        align: 'center',
+        lineSpacing: 10,
+      })
+      .setOrigin(0.5);
+
+    createButton(this, {
+      ...LIST_BUTTON_STYLE,
+      bg: COLOR.grayDark,
+      x: centerX,
+      y: centerY + 40,
+      origin: { x: 0.5, y: 0.5 },
+      fontSize: FONT_SIZE.lg,
+      padding: { x: 20, y: 12 },
+      text: '← Volver al Menú',
+      onClick: () => this.goToMenu(),
+    });
   }
 
   private async initializeData(): Promise<void> {

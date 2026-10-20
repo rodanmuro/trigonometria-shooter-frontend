@@ -1,7 +1,7 @@
 import { COLOR } from './theme';
 import type { RowBackground, TableColumn } from './widgets/DataTable';
 import type { GameMode } from '../types/api';
-import { formatDate, formatTime } from '../utils/format';
+import { formatDate, formatDateTimeShort, formatTime } from '../utils/format';
 
 /**
  * Tabla de sesiones de juego. La comparten el historial del estudiante
@@ -89,3 +89,52 @@ export const SESSION_ROW_BACKGROUND: RowBackground = {
 
 /** Filas visibles de la tabla de sesiones y separación entre ellas. */
 export const SESSION_TABLE = { maxRows: 7, rowSpacing: 50, headerWidth: 1100 } as const;
+
+/**
+ * Columnas de la tabla de sesiones en pantallas reducidas: fecha y hora en una sola columna corta y
+ * sin "Disparos" (el texto se agranda, así que hay que quitar columnas).
+ */
+export const SESSION_COLUMNS_COMPACT: TableColumn<SessionTableRow>[] = [
+  {
+    header: '#',
+    headerX: -500,
+    x: -500,
+    cell: (s) => ({ text: s.row_number.toString(), color: COLOR.grayMid }),
+  },
+  {
+    header: 'Fecha',
+    headerX: -450,
+    x: -450,
+    cell: (s) => ({ text: formatDateTimeShort(s.started_at), color: COLOR.white }),
+  },
+  {
+    header: 'Puntos',
+    headerX: -250,
+    x: -250,
+    cell: (s) => ({ text: s.final_score.toString(), color: COLOR.mint }),
+  },
+  {
+    header: 'Modo',
+    headerX: -110,
+    x: -110,
+    cell: (s) => ({
+      text: s.game_mode === 'triangle_application' ? 'Triángulo' : 'Razones',
+      color: COLOR.white,
+    }),
+  },
+  {
+    header: 'Aciertos',
+    headerX: 50,
+    x: 50,
+    cell: (s) => ({ text: s.correct_shots.toString(), color: COLOR.teal }),
+  },
+  {
+    header: 'Precisión',
+    headerX: 210,
+    x: 210,
+    cell: (s) => ({
+      text: `${s.accuracy}%`,
+      color: s.accuracy >= 80 ? COLOR.green : s.accuracy >= 60 ? COLOR.amber : COLOR.salmon,
+    }),
+  },
+];

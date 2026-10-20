@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatClock, formatDate, formatTime } from '../../src/utils/format';
+import { formatClock, formatDate, formatDateTimeShort, formatTime } from '../../src/utils/format';
 
 describe('format', () => {
   describe('formatClock', () => {
@@ -26,6 +26,10 @@ describe('format', () => {
       expect(formatTime(d)).toBe('14:07');
       expect(formatTime(new Date(2026, 2, 5, 9, 3))).toBe('09:03');
       expect(formatTime(new Date(2026, 2, 5, 0, 5))).toBe('00:05');
+    });
+
+    it('formatDateTimeShort omite el año', () => {
+      expect(formatDateTimeShort(d)).toBe('05/03 14:07');
     });
 
     it('acepta cadenas ISO', () => {

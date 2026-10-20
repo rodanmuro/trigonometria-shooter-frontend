@@ -48,11 +48,6 @@ export abstract class AdminView {
     return obj;
   }
 
-  /** Las barras de filtro HTML se posicionan respecto a la página: hay que sumar el desplazamiento del canvas. */
-  protected getCanvasTopOffset(): number {
-    return this.scene.game.canvas?.getBoundingClientRect().top ?? 0;
-  }
-
   protected button(
     x: number,
     y: number,

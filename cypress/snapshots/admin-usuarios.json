@@ -47,9 +47,7 @@
   "dom": {
     "tag": "div",
     "style": {
-      "position": "absolute",
-      "top": "85px",
-      "left": "640px",
+      "position": "fixed",
       "display": "flex",
       "flexWrap": "wrap",
       "gap": "8px",
@@ -70,8 +68,6 @@
         "tag": "span",
         "style": {
           "position": "static",
-          "top": "auto",
-          "left": "auto",
           "display": "block",
           "flexWrap": "nowrap",
           "gap": "normal",
@@ -92,8 +88,6 @@
         "tag": "input",
         "style": {
           "position": "static",
-          "top": "auto",
-          "left": "auto",
           "display": "block",
           "flexWrap": "nowrap",
           "gap": "normal",
@@ -116,8 +110,6 @@
         "tag": "span",
         "style": {
           "position": "static",
-          "top": "auto",
-          "left": "auto",
           "display": "block",
           "flexWrap": "nowrap",
           "gap": "normal",
@@ -138,8 +130,6 @@
         "tag": "input",
         "style": {
           "position": "static",
-          "top": "auto",
-          "left": "auto",
           "display": "block",
           "flexWrap": "nowrap",
           "gap": "normal",
@@ -162,8 +152,6 @@
         "tag": "span",
         "style": {
           "position": "static",
-          "top": "auto",
-          "left": "auto",
           "display": "block",
           "flexWrap": "nowrap",
           "gap": "normal",
@@ -184,8 +172,6 @@
         "tag": "input",
         "style": {
           "position": "static",
-          "top": "auto",
-          "left": "auto",
           "display": "block",
           "flexWrap": "nowrap",
           "gap": "normal",
@@ -210,8 +196,6 @@
         "tag": "select",
         "style": {
           "position": "static",
-          "top": "auto",
-          "left": "auto",
           "display": "block",
           "flexWrap": "nowrap",
           "gap": "normal",
@@ -254,8 +238,6 @@
         "tag": "select",
         "style": {
           "position": "static",
-          "top": "auto",
-          "left": "auto",
           "display": "block",
           "flexWrap": "nowrap",
           "gap": "normal",
@@ -298,8 +280,6 @@
         "tag": "input",
         "style": {
           "position": "static",
-          "top": "auto",
-          "left": "auto",
           "display": "block",
           "flexWrap": "nowrap",
           "gap": "normal",
@@ -323,8 +303,6 @@
         "tag": "button",
         "style": {
           "position": "static",
-          "top": "auto",
-          "left": "auto",
           "display": "block",
           "flexWrap": "nowrap",
           "gap": "normal",

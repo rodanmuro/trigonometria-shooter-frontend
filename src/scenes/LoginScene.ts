@@ -3,6 +3,8 @@ import { AuthManager } from '../managers/AuthManager';
 import type { GoogleCredentialResponse } from '../types/auth';
 import { authApiService } from '../services/authApiService';
 import { COLOR, FONT_SIZE } from '../ui/theme';
+import { createButton } from '../ui/widgets/Button';
+import { detectInAppBrowser } from '../utils/environment';
 
 /**
  * Escena de login con Google OAuth
@@ -47,6 +49,15 @@ export class LoginScene extends Phaser.Scene {
     );
     subtitle.setOrigin(0.5);
 
+    // Dentro de WhatsApp, Instagram, Facebook… Google bloquea el inicio de sesión: se avisa y no se
+    // intenta iniciar Google Sign-In
+    const inAppBrowser = detectInAppBrowser(navigator.userAgent);
+    if (inAppBrowser) {
+      this.showInAppBrowserNotice(inAppBrowser);
+      this.createCredits();
+      return;
+    }
+
     const instructions = this.add.text(
       this.cameras.main.centerX,
       this.cameras.main.centerY - 50,
@@ -79,16 +90,65 @@ export class LoginScene extends Phaser.Scene {
       this.initializeGoogleSignIn(loadingText);
     });
 
-    const credits = this.add.text(
-      this.cameras.main.centerX,
-      this.cameras.main.height - 30,
-      'Desarrollado con Phaser 3 & TypeScript',
-      {
+    this.createCredits();
+  }
+
+  private createCredits(): void {
+    this.add
+      .text(this.cameras.main.centerX, this.cameras.main.height - 30, 'Desarrollado con Phaser 3 & TypeScript', {
         fontSize: FONT_SIZE.sm,
-        color: '#666666'
-      }
-    );
-    credits.setOrigin(0.5);
+        color: '#666666',
+      })
+      .setOrigin(0.5);
+  }
+
+  /**
+   * Aviso para quien abre el juego desde el navegador incrustado de otra app: pide abrirlo en
+   * Chrome o Safari y ofrece copiar el enlace.
+   */
+  private showInAppBrowserNotice(app: string): void {
+    const { centerX, centerY } = this.cameras.main;
+    const where = app === 'otra app' ? 'dentro de otra aplicación' : `dentro de ${app}`;
+
+    this.add
+      .text(centerX, centerY - 50, `Google no permite iniciar sesión\n${where}.`, {
+        fontSize: FONT_SIZE.xl,
+        color: COLOR.yellow,
+        fontStyle: 'bold',
+        align: 'center',
+        lineSpacing: 10,
+      })
+      .setOrigin(0.5);
+
+    this.add
+      .text(centerX, centerY + 30, 'Abre este enlace en Chrome o Safari\npara jugar y guardar tu progreso.', {
+        fontSize: FONT_SIZE.lg,
+        color: '#cccccc',
+        align: 'center',
+        lineSpacing: 8,
+      })
+      .setOrigin(0.5);
+
+    const link = window.location.origin + window.location.pathname;
+    this.add
+      .text(centerX, centerY + 95, link, { fontSize: FONT_SIZE.sm, color: COLOR.teal })
+      .setOrigin(0.5);
+
+    const copyButton = createButton(this, {
+      x: centerX,
+      y: centerY + 160,
+      text: 'Copiar enlace',
+      fontSize: FONT_SIZE.xl,
+      bg: '#4285f4',
+      padding: { x: 28, y: 12 },
+      hover: { alpha: 0.85 },
+      onClick: () => {
+        navigator.clipboard
+          ?.writeText(link)
+          .then(() => copyButton.setText('¡Enlace copiado!'))
+          .catch(() => copyButton.setText('Copia el enlace de arriba'));
+      },
+    });
   }
 
   /**

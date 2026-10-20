@@ -193,7 +193,8 @@ export class UsersView extends AdminView {
 
     bar
       .append(dateLabel, dateFromInput, toLabel, dateToInput, minScoreLabel, minScoreInput, groupSelect, profileSelect, searchInput, clearBtn)
-      .mount(this.getCanvasTopOffset() + 85);
+      .anchorToCanvas(this.scene, 85)
+      .mount();
   }
 
   /** Columnas de la tabla de usuarios; `pageOffset` numera las filas a partir de la página actual. */

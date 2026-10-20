@@ -100,7 +100,8 @@ select {
    dónde quede el canvas en la página.
    --------------------------------------------------------------------- */
 .filter-bar {
-  position: absolute;
+  /* fija respecto a la ventana: `anchorToCanvas` calcula su posición con el rectángulo del canvas */
+  position: fixed;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -195,4 +196,32 @@ select {
 
 #fullscreen-btn[hidden] {
   display: none;
+}
+
+/* Barras de filtros en pantallas reducidas (celular): una sola fila, letra y campos pequeños */
+.filter-bar--compact {
+  gap: 4px;
+  padding: 3px 8px;
+  flex-wrap: nowrap;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.filter-bar--compact .filter-label {
+  font-size: 11px;
+}
+
+.filter-bar--compact .filter-input,
+.filter-bar--compact .filter-select,
+.filter-bar--compact .filter-btn {
+  padding: 2px 4px;
+  font-size: 11px;
+}
+
+.filter-bar--compact .filter-input--date {
+  width: 108px;
+}
+
+.filter-bar--compact .filter-input--short {
+  width: 44px;
 }

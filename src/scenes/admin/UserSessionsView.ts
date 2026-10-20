@@ -174,7 +174,8 @@ export class UserSessionsView extends AdminView {
 
     bar
       .append(label, dateFrom, document.createTextNode(' a '), dateTo, applyBtn, clearBtn)
-      .mount(this.getCanvasTopOffset() + 190);
+      .anchorToCanvas(this.scene, 190)
+      .mount();
   }
 
   private async exportSessions(): Promise<void> {

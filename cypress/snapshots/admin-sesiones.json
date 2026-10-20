@@ -87,9 +87,7 @@
   "dom": {
     "tag": "div",
     "style": {
-      "position": "absolute",
-      "top": "190px",
-      "left": "640px",
+      "position": "fixed",
       "display": "flex",
       "flexWrap": "nowrap",
       "gap": "10px",
@@ -110,8 +108,6 @@
         "tag": "span",
         "style": {
           "position": "static",
-          "top": "auto",
-          "left": "auto",
           "display": "block",
           "flexWrap": "nowrap",
           "gap": "normal",
@@ -132,8 +128,6 @@
         "tag": "input",
         "style": {
           "position": "static",
-          "top": "auto",
-          "left": "auto",
           "display": "block",
           "flexWrap": "nowrap",
           "gap": "normal",
@@ -159,8 +153,6 @@
         "tag": "input",
         "style": {
           "position": "static",
-          "top": "auto",
-          "left": "auto",
           "display": "block",
           "flexWrap": "nowrap",
           "gap": "normal",
@@ -183,8 +175,6 @@
         "tag": "button",
         "style": {
           "position": "static",
-          "top": "auto",
-          "left": "auto",
           "display": "block",
           "flexWrap": "nowrap",
           "gap": "normal",
@@ -205,8 +195,6 @@
         "tag": "button",
         "style": {
           "position": "static",
-          "top": "auto",
-          "left": "auto",
           "display": "block",
           "flexWrap": "nowrap",
           "gap": "normal",

@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { COLOR, FONT_SIZE } from './theme';
+import { getLayout } from './layout';
 import { createButton } from './widgets/Button';
 
 const OVERLAY_DEPTH = 3000;
@@ -31,6 +32,14 @@ export class SessionSummaryOverlay {
     this.showSummary();
   }
 
+  /**
+   * Cuánto crece el HUD respecto al tamaño de escritorio (0 en escritorio). En pantallas pequeñas
+   * los textos y botones se agrandan y los bloques se separan para que no se pisen.
+   */
+  private get grow(): number {
+    return getLayout(this.scene).hudScale - 1;
+  }
+
   private showSummary(): void {
     const { scene } = this;
     const { centerX, centerY, width, height } = scene.cameras.main;
@@ -44,8 +53,12 @@ export class SessionSummaryOverlay {
         .setDepth(OVERLAY_DEPTH);
     }
 
+    const u = this.grow;
+    const titleScale = 1 + 0.35 * u;
+    const bodyScale = 1 + 0.47 * u;
+
     const title = scene.add
-      .text(centerX, centerY - 150, '¡SESIÓN COMPLETADA!', {
+      .text(centerX, centerY - 150 - 130 * u, '¡SESIÓN COMPLETADA!', {
         fontSize: FONT_SIZE.hero,
         color: COLOR.yellow,
         fontStyle: 'bold',
@@ -53,10 +66,12 @@ export class SessionSummaryOverlay {
         strokeThickness: 8,
       })
       .setOrigin(0.5)
+      .setScale(titleScale)
+      .setResolution(titleScale)
       .setDepth(CONTENT_DEPTH);
 
     const stats = scene.add
-      .text(centerX, centerY, this.statsText, {
+      .text(centerX, centerY + 23 * u, this.statsText, {
         fontSize: FONT_SIZE.title,
         color: COLOR.white,
         fontStyle: 'bold',
@@ -64,15 +79,19 @@ export class SessionSummaryOverlay {
         lineSpacing: 10,
       })
       .setOrigin(0.5)
+      .setScale(bodyScale)
+      .setResolution(bodyScale)
       .setDepth(CONTENT_DEPTH);
 
     const restartText = scene.add
-      .text(centerX, centerY + 150, 'Haz clic para nueva sesión', {
+      .text(centerX, centerY + 150 + 140 * u, 'Haz clic para nueva sesión', {
         fontSize: FONT_SIZE.xxl,
         color: COLOR.green,
         fontStyle: 'italic',
       })
       .setOrigin(0.5)
+      .setScale(bodyScale)
+      .setResolution(bodyScale)
       .setDepth(CONTENT_DEPTH);
 
     // Parpadeo del texto de reinicio
@@ -97,8 +116,12 @@ export class SessionSummaryOverlay {
 
     this.current.forEach((obj) => obj.destroy());
 
+    const u = this.grow;
+    const textScale = 1 + 0.2 * u;
+    const buttonScale = 1 + u;
+
     const confirmText = scene.add
-      .text(centerX, centerY - 60, '¿Seguro que deseas iniciar\nuna nueva sesión?', {
+      .text(centerX, centerY - 60 - 20 * u, '¿Seguro que deseas iniciar\nuna nueva sesión?', {
         fontSize: FONT_SIZE.display,
         color: COLOR.yellow,
         fontStyle: 'bold',
@@ -107,6 +130,8 @@ export class SessionSummaryOverlay {
         align: 'center',
       })
       .setOrigin(0.5)
+      .setScale(textScale)
+      .setResolution(textScale)
       .setDepth(CONTENT_DEPTH);
 
     // Evita que un doble clic dispare dos veces scene.restart() (crearía
@@ -123,14 +148,15 @@ export class SessionSummaryOverlay {
 
     // Botón SÍ - reiniciar
     const yesButton = createButton(scene, {
-      x: centerX - 100,
-      y: centerY + 80,
+      x: centerX - 100 * buttonScale,
+      y: centerY + 80 + 40 * u,
       text: 'SÍ',
       fontSize: FONT_SIZE.h1,
       color: COLOR.green,
       bg: '#004400',
       padding: { x: 30, y: 15 },
       extra: { fontStyle: 'bold', stroke: COLOR.black, strokeThickness: 4 },
+      scale: buttonScale,
       hover: { scale: 1.1 },
       depth: CONTENT_DEPTH,
       onClick: choice(() => this.onRestart()),
@@ -138,14 +164,15 @@ export class SessionSummaryOverlay {
 
     // Botón NO - volver al resumen
     const noButton = createButton(scene, {
-      x: centerX + 100,
-      y: centerY + 80,
+      x: centerX + 100 * buttonScale,
+      y: centerY + 80 + 40 * u,
       text: 'NO',
       fontSize: FONT_SIZE.h1,
       color: COLOR.red,
       bg: '#440000',
       padding: { x: 30, y: 15 },
       extra: { fontStyle: 'bold', stroke: COLOR.black, strokeThickness: 4 },
+      scale: buttonScale,
       hover: { scale: 1.1 },
       depth: CONTENT_DEPTH,
       onClick: choice(() => {
