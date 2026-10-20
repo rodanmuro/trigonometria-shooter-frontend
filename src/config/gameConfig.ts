@@ -7,19 +7,22 @@ import { TriangleApplicationScene } from '../scenes/TriangleApplicationScene';
 import AdminScene from '../scenes/AdminScene';
 import StatsScene from '../scenes/StatsScene';
 import { COLOR } from '../ui/theme';
+import { computeWorldWidth, WORLD_HEIGHT } from '../ui/layout';
+
+// Se calcula una vez al arrancar, según la proporción de la pantalla
+const WORLD_WIDTH = computeWorldWidth(window.innerWidth, window.innerHeight);
 
 export const gameConfig: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
-  width: 1200,
-  height: 800,
   parent: 'app',
-  // El lienzo se ajusta (sin deformar) al espacio disponible y nunca se agranda por encima de su tamaño base.
+  // El mundo del juego mide 800 de alto y entre 1200 y 1800 de ancho según la pantalla; el lienzo
+  // se ajusta (sin deformar) al espacio disponible y nunca se agranda por encima de su tamaño base.
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
-    width: 1200,
-    height: 800,
-    max: { width: 1200, height: 800 },
+    width: WORLD_WIDTH,
+    height: WORLD_HEIGHT,
+    max: { width: WORLD_WIDTH, height: WORLD_HEIGHT },
   },
   backgroundColor: COLOR.navy,
   physics: {

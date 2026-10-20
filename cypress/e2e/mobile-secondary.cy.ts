@@ -6,7 +6,6 @@ import {
   endSessionNow,
   expectNoSceneText,
   expectSceneText,
-  GAME_WIDTH,
   gameScene,
   getScene,
   openAdminFromMenu,
@@ -16,9 +15,13 @@ import {
   textObjects,
   visitApp,
   waitForScene,
+  worldWidth,
 } from '../support/gameDriver';
 
 const PHONE_LANDSCAPE: [number, number] = [844, 390];
+
+/** Cuánto se ensancha la tabla compacta de Estadísticas con el mundo (igual que StatsScene). */
+const spreadOf = (win: Window) => Math.min(1.6, Math.max(1, (worldWidth(win) - 120) / 1100));
 
 describe('Celular: pantallas secundarias', () => {
   describe('Panel de administración (solo escritorio)', () => {
@@ -91,7 +94,7 @@ describe('Celular: pantallas secundarias', () => {
       expectSceneText(RATIO_GAME.key, '¿Seguro que deseas iniciar\nuna nueva sesión?');
 
       cy.window().then((win) => {
-        const scale = win.document.querySelector('canvas')!.getBoundingClientRect().width / GAME_WIDTH;
+        const scale = win.document.querySelector('canvas')!.getBoundingClientRect().width / worldWidth(win);
         for (const label of ['SÍ', 'NO']) {
           const b = boundsOf(win, label);
           expect(b.width * scale, `ancho de ${label} en pantalla`).to.be.at.least(48);
@@ -147,11 +150,11 @@ describe('Celular: pantallas secundarias', () => {
         texts.forEach((t) => {
           const b = bounds(t);
           expect(b.left, `${t.text} dentro (izq.)`).to.be.at.least(-1);
-          expect(b.right, `${t.text} dentro (der.)`).to.be.at.most(GAME_WIDTH + 1);
+          expect(b.right, `${t.text} dentro (der.)`).to.be.at.most(worldWidth(win) + 1);
           expect(b.bottom, `${t.text} dentro (abajo)`).to.be.at.most(801);
         });
         // Las filas (columna "#") no se solapan entre sí
-        const rows = texts.filter((t) => /^\d+$/.test(t.text) && Math.abs(t.x - (GAME_WIDTH / 2 - 500)) < 2);
+        const rows = texts.filter((t) => /^\d+$/.test(t.text) && Math.abs(t.x - (worldWidth(win) / 2 - 500 * spreadOf(win))) < 2);
         const ys = rows.map((t) => t.y).sort((a, b) => a - b);
         for (let i = 1; i < ys.length; i++) expect(ys[i] - ys[i - 1], 'separación de filas').to.be.at.least(45);
       });
@@ -164,9 +167,9 @@ describe('Celular: pantallas secundarias', () => {
       openStatsFromMenu();
 
       cy.get('#stats-filters').should('have.class', 'filter-bar--compact');
-      cy.get('canvas').then(($canvas) => {
-        const c = $canvas[0].getBoundingClientRect();
-        const scale = c.width / GAME_WIDTH;
+      cy.window().then((win) => {
+        const c = win.document.querySelector('canvas')!.getBoundingClientRect();
+        const scale = c.width / worldWidth(win);
         cy.get('#stats-filters').then(($bar) => {
           const b = $bar[0].getBoundingClientRect();
           expect(b.top, `borde superior a 135 del mundo (canvas top ${c.top}, escala ${scale})`).to.be.closeTo(c.top + 135 * scale, 2);

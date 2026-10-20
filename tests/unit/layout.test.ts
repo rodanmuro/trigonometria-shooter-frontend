@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { computeLayout, MIN_CARD_SCREEN_HEIGHT } from '../../src/ui/layout';
+import {
+  computeLayout,
+  computeWorldWidth,
+  MAX_WORLD_WIDTH,
+  MIN_CARD_SCREEN_HEIGHT,
+  MIN_WORLD_WIDTH,
+} from '../../src/ui/layout';
 
 describe('computeLayout', () => {
   it('a escala 1 (escritorio) no cambia nada', () => {
@@ -60,5 +66,39 @@ describe('computeLayout', () => {
     expect(l.hudScale).toBeLessThanOrEqual(1.6);
     expect(l.crosshairScale).toBeLessThanOrEqual(1.8);
     expect(Number.isFinite(l.hitSlop)).toBe(true);
+  });
+});
+
+describe('computeWorldWidth', () => {
+  it('una pantalla 3:2 o más cuadrada mantiene el ancho de siempre (1200)', () => {
+    expect(computeWorldWidth(1200, 800)).toBe(1200);
+    expect(computeWorldWidth(1280, 900)).toBe(1200);
+    expect(computeWorldWidth(1024, 768)).toBe(1200);
+  });
+
+  it('una pantalla alargada ensancha el mundo según su proporción', () => {
+    expect(computeWorldWidth(1600, 800)).toBe(1600);
+    expect(computeWorldWidth(1920, 1080)).toBe(1422);
+    expect(computeWorldWidth(844, 390)).toBeGreaterThan(1700);
+  });
+
+  it('tiene un máximo para pantallas extremas', () => {
+    expect(computeWorldWidth(3440, 1000)).toBe(MAX_WORLD_WIDTH);
+    expect(computeWorldWidth(2400, 360)).toBe(MAX_WORLD_WIDTH);
+  });
+
+  it('da lo mismo abrir la página en vertical que en horizontal', () => {
+    expect(computeWorldWidth(390, 844)).toBe(computeWorldWidth(844, 390));
+    expect(computeWorldWidth(412, 915)).toBe(computeWorldWidth(915, 412));
+  });
+
+  it('siempre es un entero par dentro de los límites', () => {
+    for (const [w, h] of [[1, 1], [800, 600], [915, 412], [2340, 1080], [0, 0], [5000, 100]]) {
+      const width = computeWorldWidth(w, h);
+      expect(Number.isInteger(width)).toBe(true);
+      expect(width % 2).toBe(0);
+      expect(width).toBeGreaterThanOrEqual(MIN_WORLD_WIDTH);
+      expect(width).toBeLessThanOrEqual(MAX_WORLD_WIDTH);
+    }
   });
 });

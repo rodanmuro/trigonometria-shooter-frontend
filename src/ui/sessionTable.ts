@@ -138,3 +138,8 @@ export const SESSION_COLUMNS_COMPACT: TableColumn<SessionTableRow>[] = [
     }),
   },
 ];
+
+/** Reparte las posiciones de las columnas en proporción al ancho de la tabla (mundo más ancho que 1200). */
+export function spreadColumns(columns: TableColumn<SessionTableRow>[], spread: number): TableColumn<SessionTableRow>[] {
+  return spread === 1 ? columns : columns.map((c) => ({ ...c, x: c.x * spread, headerX: c.headerX * spread }));
+}

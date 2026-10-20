@@ -4,7 +4,7 @@ import {
   cardsOf,
   clickGame,
   expectSceneText,
-  GAME_WIDTH,
+  worldWidth,
   GAMES,
   gameScene,
   shootCard,
@@ -27,8 +27,9 @@ function parkCardAtCenter() {
       scene.cardSpawner.stopSpawning();
       card.velocityX = 0;
       card.velocityY = 0;
-      card.setPosition(GAME_WIDTH / 2, 400);
-      return { scale: card.scaleX as number, halfWidth: 70 * (card.scaleX as number), card };
+      const cx = worldWidth(win) / 2;
+      card.setPosition(cx, 400);
+      return { scale: card.scaleX as number, halfWidth: 70 * (card.scaleX as number), card, cx };
     });
 }
 
@@ -52,23 +53,23 @@ GAMES.forEach((game) => {
           expect(scale, 'escala de la tarjeta').to.be.greaterThan(1.3);
           cy.window().then((win) => {
             const canvasWidth = win.document.querySelector('canvas')!.getBoundingClientRect().width;
-            const screenHeight = 80 * scale * (canvasWidth / GAME_WIDTH);
+            const screenHeight = 80 * scale * (canvasWidth / worldWidth(win));
             expect(screenHeight, 'alto de la tarjeta en pantalla').to.be.at.least(50);
           });
         });
       });
 
       it('un toque un poco fuera del borde de la tarjeta la acierta (tolerancia del dedo)', () => {
-        parkCardAtCenter().then(({ halfWidth, card }) => {
+        parkCardAtCenter().then(({ halfWidth, card, cx }) => {
           // 8 px del mundo (≈ 4 px en pantalla) fuera del borde horizontal
-          clickGame(GAME_WIDTH / 2 + halfWidth + 8, 400);
+          clickGame(cx + halfWidth + 8, 400);
           cy.window().should(() => expect(card.active, 'la tarjeta fue golpeada').to.equal(false));
         });
       });
 
       it('un toque muy lejos de la tarjeta no la acierta', () => {
-        parkCardAtCenter().then(({ halfWidth, card }) => {
-          clickGame(GAME_WIDTH / 2 + halfWidth + 120, 400);
+        parkCardAtCenter().then(({ halfWidth, card, cx }) => {
+          clickGame(cx + halfWidth + 120, 400);
           waitFrames(3);
           cy.window().should(() => expect(card.active, 'la tarjeta sigue en pantalla').to.equal(true));
         });
@@ -132,8 +133,8 @@ GAMES.forEach((game) => {
       });
 
       it('el impacto sigue siendo exacto: un toque fuera del borde no acierta', () => {
-        parkCardAtCenter().then(({ halfWidth, card }) => {
-          clickGame(GAME_WIDTH / 2 + halfWidth + 8, 400);
+        parkCardAtCenter().then(({ halfWidth, card, cx }) => {
+          clickGame(cx + halfWidth + 8, 400);
           waitFrames(3);
           cy.window().should(() => expect(card.active, 'la tarjeta sigue en pantalla').to.equal(true));
         });

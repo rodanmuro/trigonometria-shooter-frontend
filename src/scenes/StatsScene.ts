@@ -14,7 +14,7 @@ import { createModalFrame } from '../ui/widgets/Modal';
 import { LIST_BUTTON_STYLE } from '../ui/buttonStyles';
 import { FilterBar } from '../ui/html/FilterBar';
 import { createDataTable } from '../ui/widgets/DataTable';
-import { SESSION_COLUMNS, SESSION_COLUMNS_COMPACT, SESSION_ROW_BACKGROUND, SESSION_TABLE } from '../ui/sessionTable';
+import { SESSION_COLUMNS, SESSION_COLUMNS_COMPACT, SESSION_ROW_BACKGROUND, SESSION_TABLE, spreadColumns } from '../ui/sessionTable';
 import { getLayout } from '../ui/layout';
 
 /**
@@ -120,16 +120,19 @@ export default class StatsScene extends Phaser.Scene {
 
     const tableY = compact ? 225 : 230;
 
+    // Con un mundo más ancho que 1200 (pantalla alargada) la tabla compacta se ensancha para aprovecharlo
+    const spread = compact ? Math.min(1.6, Math.max(1, (this.cameras.main.width - 120) / SESSION_TABLE.headerWidth)) : 1;
+
     createDataTable(this, {
       centerX,
-      columns: compact ? SESSION_COLUMNS_COMPACT : SESSION_COLUMNS,
+      columns: compact ? spreadColumns(SESSION_COLUMNS_COMPACT, spread) : SESSION_COLUMNS,
       rows: this.sessions,
       maxRows: SESSION_TABLE.maxRows,
-      header: { y: tableY, width: SESSION_TABLE.headerWidth, fontSize: FONT_SIZE.xsPlus },
+      header: { y: tableY, width: SESSION_TABLE.headerWidth * spread, fontSize: FONT_SIZE.xsPlus },
       textScale: layout.hudScale,
       firstRowY: tableY + 45,
       rowSpacing: SESSION_TABLE.rowSpacing,
-      rowBackground: SESSION_ROW_BACKGROUND,
+      rowBackground: { ...SESSION_ROW_BACKGROUND, width: SESSION_ROW_BACKGROUND.width * spread },
       onCreate: (obj) => obj.setData('clearable', true),
     });
 

@@ -3,7 +3,7 @@ import type Phaser from 'phaser';
 /**
  * Medidas que dependen de la escala a la que se muestra el canvas.
  *
- * El mundo del juego es 1200x800. En un celular el canvas se muestra reducido (≈ 0,5×) y
+ * El mundo del juego mide 800 de alto y entre 1200 y 1800 de ancho. En un celular el canvas se muestra reducido (≈ 0,5×) y
  * lo dibujado queda diminuto y difícil de tocar. Aquí vive la única fórmula que compensa esa
  * reducción; ningún otro código decide por tipo de dispositivo. Con escala 1 (escritorio) todos
  * los valores son neutros: cardScale = 1, hudScale = 1, hitSlop = 0.
@@ -24,6 +24,12 @@ export interface Layout {
   /** El canvas se muestra tan reducido que las pantallas densas (tablas, panel admin) no son usables */
   compact: boolean;
 }
+
+/** Alto del mundo del juego: fijo. El ancho se adapta a la pantalla (ver computeWorldWidth). */
+export const WORLD_HEIGHT = 800;
+/** Ancho mínimo del mundo (proporción 3:2) y máximo (≈ 2,25:1, pantallas muy alargadas) */
+export const MIN_WORLD_WIDTH = 1200;
+export const MAX_WORLD_WIDTH = 1800;
 
 /** Alto mínimo de una tarjeta en pantalla, en px (una tarjeta de escritorio mide 80) */
 export const MIN_CARD_SCREEN_HEIGHT = 56;
@@ -66,4 +72,17 @@ export function getDisplayScale(scene: Phaser.Scene): number {
 
 export function getLayout(scene: Phaser.Scene): Layout {
   return computeLayout(getDisplayScale(scene));
+}
+
+/**
+ * Ancho del mundo del juego para una pantalla: el alto es fijo (800) y el ancho sigue la proporción
+ * de la pantalla, entre 1200 (3:2, como antes) y 1800, para que el juego llene el ancho de pantallas
+ * alargadas (≈ 20:9) en vez de dejar franjas negras. Se calcula una sola vez al arrancar, con la
+ * dimensión mayor como ancho: así da lo mismo si la página se abre con el celular en vertical.
+ */
+export function computeWorldWidth(viewportWidth: number, viewportHeight: number): number {
+  const long = Math.max(viewportWidth, viewportHeight);
+  const short = Math.max(1, Math.min(viewportWidth, viewportHeight));
+  const width = clamp(Math.round((WORLD_HEIGHT * long) / short), MIN_WORLD_WIDTH, MAX_WORLD_WIDTH);
+  return width - (width % 2);
 }

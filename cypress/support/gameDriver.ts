@@ -15,6 +15,7 @@ import { userData } from './fixtures';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type AnyObj = any;
 
+/** Mundo de escritorio (ventana 3:2 o más cuadrada). En pantallas alargadas el ancho crece: ver `worldWidth`. */
 export const GAME_WIDTH = 1200;
 export const GAME_HEIGHT = 800;
 
@@ -215,11 +216,18 @@ export function expectNoSceneText(key: string, unexpected: string | RegExp): voi
 /* Clicks sobre el canvas                                              */
 /* ------------------------------------------------------------------ */
 
-/** Click en coordenadas del mundo del juego (1200x800), sin importar el tamaño en pantalla. */
+/** Ancho real del mundo del juego (1200 en escritorio; hasta 1800 en pantallas alargadas). */
+export function worldWidth(win: Window): number {
+  return getGame(win).scale.gameSize.width as number;
+}
+
+/** Click en coordenadas del mundo del juego (alto 800), sin importar el tamaño en pantalla. */
 export function clickGame(x: number, y: number): void {
-  cy.get('canvas').then(($canvas) => {
-    const rect = $canvas[0].getBoundingClientRect();
-    cy.wrap($canvas).click((x / GAME_WIDTH) * rect.width, (y / GAME_HEIGHT) * rect.height);
+  cy.window({ log: false }).then((win) => {
+    cy.get('canvas').then(($canvas) => {
+      const rect = $canvas[0].getBoundingClientRect();
+      cy.wrap($canvas).click((x / worldWidth(win)) * rect.width, (y / GAME_HEIGHT) * rect.height);
+    });
   });
 }
 
@@ -262,9 +270,11 @@ export function doubleClickSceneText(key: string, label: string): void {
       return { x: b.centerX as number, y: b.centerY as number };
     })
     .then(({ x, y }) => {
-      cy.get('canvas').then(($canvas) => {
-        const rect = $canvas[0].getBoundingClientRect();
-        cy.wrap($canvas).dblclick((x / GAME_WIDTH) * rect.width, (y / GAME_HEIGHT) * rect.height);
+      cy.window({ log: false }).then((win) => {
+        cy.get('canvas').then(($canvas) => {
+          const rect = $canvas[0].getBoundingClientRect();
+          cy.wrap($canvas).dblclick((x / worldWidth(win)) * rect.width, (y / GAME_HEIGHT) * rect.height);
+        });
       });
     });
 }
@@ -635,7 +645,7 @@ export function adminFilterBar(win: Window): Element | null {
 
 /** Click en una fila de la tabla de usuarios (0 = la primera). */
 export function clickAdminUserRow(index: number): void {
-  clickGame(GAME_WIDTH / 2, 230 + index * 40);
+  cy.window({ log: false }).then((win) => clickGame(worldWidth(win) / 2, 230 + index * 40));
 }
 
 /**
